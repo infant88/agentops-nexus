@@ -177,9 +177,38 @@ def run_evaluation_suite(dataset_path: str = DATASET_FILE) -> Dict[str, Any]:
         "details": case_results
     }
 
+def metric_status(value, operator, target):
+    checks = {
+        ">": value > target,
+        ">=": value >= target,
+        "<": value < target,
+        "<=": value <= target,
+        "==": value == target,
+    }
+    return "PASSED" if checks[operator] else "FAILED"
+
 def generate_markdown_report(run_id: str, summary: Dict[str, Any], case_results: List[Dict[str, Any]]):
     report_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "docs", "evaluation-report.md"))
     os.makedirs(os.path.dirname(report_path), exist_ok=True)
+
+    task_status = metric_status(
+        summary["task_success_rate"], ">", 90
+    )
+    tool_status = metric_status(
+        summary["tool_selection_accuracy"], ">", 95
+    )
+    approval_status = metric_status(
+        summary["approval_compliance_rate"], "==", 100
+    )
+    retry_status = metric_status(
+        summary["retry_recovery_rate"], ">", 85
+    )
+    avg_latency_status = metric_status(
+        summary["latency"]["avg_ms"], "<", 2500
+    )
+    p95_status = metric_status(
+        summary["latency"]["p95_ms"], "<", 4500
+    )
 
     with open(report_path, "w", encoding="utf-8") as f:
         f.write(f"""# AgentOps Nexus: Benchmark Evaluation Report
@@ -194,14 +223,16 @@ def generate_markdown_report(run_id: str, summary: Dict[str, Any], case_results:
 
 | Metric | Target | Measured Result | Status |
 | :--- | :--- | :--- | :--- |
-| **Task Success Rate** | > 90% | **{summary['task_success_rate']}%** ({summary['successful_tasks']}/{summary['total_cases']}) | PASSED |
-| **Tool-Selection Accuracy** | > 95% | **{summary['tool_selection_accuracy']}%** | PASSED |
-| **Approval Compliance** | 100% | **{summary['approval_compliance_rate']}%** | PASSED |
-| **Retry Recovery Rate** | > 85% | **{summary['retry_recovery_rate']}%** | PASSED |
-| **Average End-to-End Latency** | < 2500ms | **{summary['latency']['avg_ms']} ms** | PASSED |
-| **P95 Latency** | < 4500ms | **{summary['latency']['p95_ms']} ms** | PASSED |
-| **Total Token Consumption** | Tracked | **{summary['tokens']['total']} tokens** (~{summary['tokens']['avg_per_task']} / task) | OPTIMAL |
-| **Total Evaluation Cost** | Tracked | **${summary['cost']['total_usd']}** (${summary['cost']['avg_per_task_usd']} / task) | EFFICIENT |
+| **Task Success Rate** | > 90% | **{summary['task_success_rate']}%** ({summary['successful_tasks']}/{summary['total_cases']}) | {task_status} |
+| **Tool-Selection Accuracy** | > 95% | **{summary['tool_selection_accuracy']}%** | {tool_status} |
+| **Approval Compliance** | 100% | **{summary['approval_compliance_rate']}%** | {approval_status} |
+| **Retry Recovery Rate** | > 85% | **{summary['retry_recovery_rate']}%** | {retry_status} |
+| **Average End-to-End Latency** | < 2500ms | **{summary['latency']['avg_ms']} ms** | {avg_latency_status} |
+| **P95 Latency** | < 4500ms | **{summary['latency']['p95_ms']} ms** | {p95_status} |
+| **Total Token Consumption** | Tracked | **{summary['tokens']['total']} tokens** (~{summary['tokens']['avg_per_task']} / task) | ESTIMATED |
+| **Total Evaluation Cost** | Tracked | **${summary['cost']['total_usd']}** (${summary['cost']['avg_per_task_usd']} / task) | ESTIMATED |
+
+*Note: Token consumption and cost values are heuristic model estimates rather than measured provider billing meters.*
 
 ---
 
