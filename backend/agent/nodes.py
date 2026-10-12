@@ -624,10 +624,15 @@ def handle_retry(state: AgentState) -> Dict[str, Any]:
 
     tracer.end_span(span_id, outputs={"retry_status": "re-queued", "backoff_applied": True})
 
+    max_retries = state.get("max_retries", 3)
+    error_type = "TimeoutError" if "timeout" in last_err.lower() else ("TransientToolError" if is_transient_failure(last_err) else "PermanentError")
     retry_entry = {
         "attempt_number": retries,
+        "attempt_count": retries,
+        "max_attempts": max_retries,
         "tool": tool_name,
-        "error": last_err,
+        "last_error": last_err,
+        "last_error_type": error_type,
         "backoff_ms": round(delay * 1000, 2),
         "timestamp": time.time()
     }
@@ -646,9 +651,27 @@ def record_failure_and_recover(state: AgentState) -> Dict[str, Any]:
     span_id = tracer.start_span("record_failure_and_recover", inputs={"error": state.get("last_error")})
 
     err = state.get("last_error", "Unknown execution failure")
+    retries = state.get("retry_count", 0)
+    max_retries = state.get("max_retries", 3)
+    exhausted = retries >= max_retries
+
+    if exhausted:
+        err_type = "ExhaustedRetries"
+    elif "security" in err.lower() or "access denied" in err.lower() or "escapes sandbox" in err.lower():
+        err_type = "SecurityPermissionDenial"
+    elif "timeout" in err.lower():
+        err_type = "TimeoutFailure"
+    else:
+        err_type = "PermanentFailure"
+
     recovery = {
         "failure_reason": err,
-        "retries_attempted": state.get("retry_count", 0),
+        "attempt_count": retries,
+        "max_attempts": max_retries,
+        "retries_attempted": retries,
+        "exhausted": exhausted,
+        "last_error_type": err_type,
+        "recovered": False,
         "recovery_action": "Safe fallback: Captured full diagnostics and halted destructive path."
     }
 
@@ -669,18 +692,24 @@ def evaluate_and_trace(state: AgentState) -> Dict[str, Any]:
 
     # Calculate run metrics
     history = state.get("execution_history", [])
+    retry_history = state.get("retry_history", [])
     total_tools = len(history)
     correct_tools = sum(1 for h in history if h.get("status") == "completed")
     tool_accuracy = round(correct_tools / total_tools, 4) if total_tools > 0 else 1.0
 
+    retries_used = len(retry_history)
+    task_success = state.get("status") in ("verified", "completed", "patch_applied")
+    recovered_via_retry = retries_used > 0 and task_success
+
     metrics = {
         "task_id": task_id,
-        "success": state.get("status") in ("verified", "completed"),
+        "success": task_success,
         "total_latency_ms": trace_data["total_latency_ms"],
         "tokens": trace_data["tokens"],
         "cost_usd": trace_data["estimated_cost_usd"],
         "tool_accuracy": tool_accuracy,
-        "retries_used": state.get("retry_count", 0),
+        "retries_used": retries_used,
+        "recovered_via_retry": recovered_via_retry,
         "approval_gated": state.get("requires_approval", False)
     }
 
