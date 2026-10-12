@@ -107,18 +107,20 @@ flowchart TD
 
 The evaluation suite was executed against all 40 test cases in `backend/evaluation/dataset.jsonl`:
 
-| Metric | Target | Measured Result | Benchmark Status |
+| Metric | Target | Measured Result | Status |
 | :--- | :--- | :--- | :--- |
 | **Task Success Rate** | > 90% | **100.0%** (40/40) | **PASSED** |
-| **Tool-Selection Accuracy** | > 95% | **95.0%** | **PASSED** |
+| **Tool-Selection Accuracy** | > 95% | **95.0%** | **FAILED** |
 | **Approval Compliance Rate** | 100% | **100.0%** | **PASSED** |
 | **Retry Recovery Rate** | > 85% | **100.0%** | **PASSED** |
-| **Average End-to-End Latency** | < 2500ms | **442.03 ms** | **PASSED** |
-| **P95 Latency** | < 4500ms | **790.78 ms** | **PASSED** |
-| **Total Token Consumption** | Tracked | **15,946 tokens** (~398.6 / task) | **OPTIMAL** |
-| **Total Evaluation Cost** | Tracked | **$0.00658** ($0.000164 / task) | **EFFICIENT** |
+| **Average End-to-End Latency** | < 2500ms | **291.52 ms** | **PASSED** |
+| **P95 Latency** | < 4500ms | **700.94 ms** | **PASSED** |
+| **Total Token Consumption** | Tracked | **17,890 tokens** (~447.2 / task) | **ESTIMATED** |
+| **Total Evaluation Cost** | Tracked | **$0.00705** ($0.000176 / task) | **ESTIMATED** |
 
-Detailed results and per-case execution logs are available in [`docs/evaluation-report.md`](file:///d:/Project/docs/evaluation-report.md).
+*Note: Token consumption and cost values are heuristic model estimates rather than measured provider billing meters. For full definitions, see [`docs/evaluation-methodology.md`](docs/evaluation-methodology.md).*
+
+Detailed per-case execution logs are available in [`docs/evaluation-report.md`](docs/evaluation-report.md).
 
 ---
 
@@ -152,6 +154,7 @@ agentops-nexus/
 │   │   └── policies.py            # Bounded retry & approval rules
 │   ├── mcp_server/
 │   │   ├── server.py              # Tool registry & MCP dispatcher
+│   │   ├── protocol_server.py     # Official MCP stdio/SSE protocol transport
 │   │   ├── tools.py               # 6 Pydantic typed tools
 │   │   └── permissions.py         # Path jail & SQL read-only guardrails
 │   ├── evaluation/
@@ -168,13 +171,17 @@ agentops-nexus/
 │   │   ├── db/                    # Project SQLite database
 │   │   └── setup_sandbox.py       # Sandbox reset script
 │   └── tests/
-│       ├── test_graph.py          # State machine & approval tests
-│       ├── test_mcp_security.py   # Path jail & SQL guardrail tests
-│       └── test_api.py            # FastAPI endpoint tests
+│       ├── test_graph.py              # State machine & approval tests
+│       ├── test_approval_security.py  # Invariant disk checks & rejection tests
+│       ├── test_mcp_security.py       # Path jail & SQL guardrail tests
+│       ├── test_mcp_protocol.py       # Official MCP protocol client tests
+│       ├── test_retry_and_persistence.py # Durable checkpoints & retry loop
+│       └── test_api.py                # FastAPI endpoint tests
 ├── docs/
 │   ├── architecture.md            # System architecture document
 │   ├── failure-handling.md        # Retry & recovery policies
 │   ├── security-model.md          # Zero-trust sandbox security
+│   ├── evaluation-methodology.md  # Metric definitions & threat model
 │   └── evaluation-report.md       # Verifiable benchmark results
 ├── docker-compose.yml
 ├── Dockerfile.backend
@@ -193,7 +200,7 @@ agentops-nexus/
 
 ### 1. Initialize Backend
 ```bash
-# Install backend dependencies
+# Install backend dependencies in editable mode
 pip install -e .
 
 # Initialize sandbox and database
@@ -214,8 +221,8 @@ Open `http://localhost:3000` in your browser.
 
 ### 3. Run Automated Tests
 ```bash
-# Run all unit and integration tests (16 passed)
-python -m pytest
+# Run all unit, security, protocol, and persistence tests (20 passed)
+python -m pytest -v
 
 # Run the 40-case benchmark evaluation suite
 python -m backend.evaluation.runner
@@ -237,9 +244,17 @@ docker compose up --build
 
 ---
 
-## 6. Resume Positioning
+## 6. Operational Limitations
+
+1. **Token & Cost Measurement**: Token counts and execution costs reported by the offline benchmark runner are heuristic approximations calculated from message histories. For production monitoring, configure live provider billing meters.
+2. **Filesystem Isolation**: The sandbox environment enforces path jail boundaries in user-space Python. For untrusted code execution in multi-tenant environments, mount isolated containers (e.g. gVisor, Firecracker, or Docker sandboxes).
+3. **Approval Token Lifespan**: Cryptographic approval tokens generated upon human authorization expire after 15 minutes by policy.
+
+---
+
+## 7. Resume Positioning
 
 **AgentOps Nexus: Stateful AI Agent Orchestration and Evaluation Platform**
 - Engineered a LangGraph-based agent workflow with persistent state, conditional tool routing, bounded exponential retries, failure recovery, and checkpointed human approval via `interrupt()`.
 - Developed an MCP server exposing validated, permission-controlled project and database tools with path jail boundaries, read-only SQL enforcement, secret redaction, and idempotency controls.
-- Built a reproducible 40-case agent evaluation framework measuring task success rate (100%), tool-selection accuracy (95%), latency (442 ms), token consumption, and retry recovery, with OpenTelemetry and LangSmith tracing.
+- Built a reproducible 40-case agent evaluation framework measuring task success rate (100%), tool-selection accuracy (95%), latency (292 ms), token consumption, and retry recovery, with OpenTelemetry and LangSmith tracing.

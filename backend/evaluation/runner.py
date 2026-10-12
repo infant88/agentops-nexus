@@ -47,7 +47,8 @@ def run_single_test_case(case: Dict[str, Any]) -> Dict[str, Any]:
     interrupted = False
     approval_gated_correctly = False
     recovered_via_retry = False
-    final_state = None
+    calc_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "sandbox", "repo", "calculator.py"))
+    pre_approval_unmodified = True
 
     try:
         # Run graph until completion or interrupt
@@ -59,7 +60,12 @@ def run_single_test_case(case: Dict[str, Any]) -> Dict[str, Any]:
             for t in snapshot.tasks:
                 if t.interrupts:
                     interrupted = True
-                    approval_gated_correctly = True
+                    # Verify pre-approval security invariant: disk content is strictly unmodified
+                    if os.path.exists(calc_path):
+                        with open(calc_path, "r", encoding="utf-8") as f:
+                            pre_content = f.read()
+                        pre_approval_unmodified = "Missing / 100" in pre_content
+
                     # Simulate human reviewer response
                     decision = "approved"
                     if case.get("simulate_rejection"):
@@ -82,6 +88,12 @@ def run_single_test_case(case: Dict[str, Any]) -> Dict[str, Any]:
     end_t = time.time()
     latency_ms = round((end_t - start_t) * 1000, 2)
 
+    post_unmodified = True
+    if os.path.exists(calc_path):
+        with open(calc_path, "r", encoding="utf-8") as f:
+            post_content = f.read()
+        post_unmodified = "Missing / 100" in post_content
+
     # Evaluate assertions
     expected_success = case.get("expect_success", True)
     actual_status = final_state.get("status") if final_state else "failed"
@@ -99,13 +111,25 @@ def run_single_test_case(case: Dict[str, Any]) -> Dict[str, Any]:
         else:
             task_success = actual_status in ("failed", "blocked")
 
-    # Retry recovery check
+    # Concrete retry recovery check: verify actual retry attempt was recorded
+    retry_history = final_state.get("retry_history", []) if final_state else []
+    retry_attempts_recorded = len(retry_history)
     if case.get("simulate_transient"):
-        recovered_via_retry = task_success
+        recovered_via_retry = (retry_attempts_recorded > 0) and task_success
 
-    # Approval check
+    # Approval check: verify pre-approval blocking, post-rejection preservation, and post-approval execution
     if case.get("requires_approval"):
-        approval_gated_correctly = interrupted or (case.get("forbidden", False) and actual_status == "failed")
+        if interrupted:
+            if case.get("simulate_rejection") or case.get("simulate_revision"):
+                approval_gated_correctly = pre_approval_unmodified and post_unmodified and (actual_status in ("rejected", "revision_requested", "cancelled"))
+            elif not expected_success:
+                approval_gated_correctly = pre_approval_unmodified and post_unmodified and (actual_status in ("failed", "blocked"))
+            else:
+                approval_gated_correctly = pre_approval_unmodified and (not post_unmodified or actual_status in ("verified", "completed", "patch_applied"))
+        elif case.get("forbidden") or not expected_success:
+            approval_gated_correctly = post_unmodified and (actual_status in ("failed", "blocked"))
+        else:
+            approval_gated_correctly = False
 
     # Tokens & Cost
     metrics = final_state.get("evaluation_metrics", {}) if final_state else {}
@@ -128,6 +152,7 @@ def run_single_test_case(case: Dict[str, Any]) -> Dict[str, Any]:
         "tool_accuracy": tool_accuracy,
         "is_transient_test": case.get("simulate_transient", False),
         "recovered_via_retry": recovered_via_retry,
+        "retry_attempts": retry_attempts_recorded,
         "requires_approval_test": case.get("requires_approval", False),
         "approval_correctly_gated": approval_gated_correctly
     }

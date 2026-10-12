@@ -28,6 +28,7 @@ def calculate_benchmark_metrics(case_results: List[Dict[str, Any]]) -> Dict[str,
     # Retry recovery
     transient_cases = [c for c in case_results if c.get("is_transient_test", False)]
     recovered_transient = sum(1 for c in transient_cases if c.get("recovered_via_retry", False))
+    total_retry_attempts = sum(c.get("retry_attempts", 0) for c in transient_cases)
     retry_recovery_rate = (
         round(recovered_transient / len(transient_cases) * 100, 2)
         if transient_cases else 100.0
@@ -69,13 +70,31 @@ def calculate_benchmark_metrics(case_results: List[Dict[str, Any]]) -> Dict[str,
             "input": total_tokens_in,
             "output": total_tokens_out,
             "total": total_tokens,
-            "avg_per_task": round(total_tokens / total_cases, 1)
+            "avg_per_task": round(total_tokens / total_cases, 1),
+            "is_estimated": True
         },
         "cost": {
             "total_usd": total_cost_usd,
-            "avg_per_task_usd": round(total_cost_usd / total_cases, 6)
+            "avg_per_task_usd": round(total_cost_usd / total_cases, 6),
+            "is_estimated": True
         },
         "retry_recovery_rate": retry_recovery_rate,
+        "total_retry_attempts_recorded": total_retry_attempts,
         "approval_compliance_rate": approval_compliance_rate,
-        "category_breakdown": categories
+        "category_breakdown": categories,
+        "methodology": {
+            "empirical_metrics": [
+                "task_success_rate",
+                "tool_selection_accuracy",
+                "approval_compliance_rate",
+                "retry_recovery_rate",
+                "latency"
+            ],
+            "heuristic_estimates": [
+                "tokens",
+                "cost"
+            ],
+            "estimation_notes": "Token counts and costs are offline heuristic approximations. Latencies, tool accuracy, retries, and approval gates are directly instrumented measurements."
+        }
     }
+

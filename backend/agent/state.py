@@ -27,6 +27,7 @@ class AgentState(TypedDict):
     approval_token: Optional[str]
     idempotency_key: Optional[str]
     execution_history: List[Dict[str, Any]]
+    retry_history: List[Dict[str, Any]]
     verification_result: Optional[Dict[str, Any]]
     failure_recovery: Optional[Dict[str, Any]]
     evaluation_metrics: Optional[Dict[str, Any]]

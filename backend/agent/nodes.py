@@ -37,6 +37,7 @@ def receive_task(state: AgentState) -> Dict[str, Any]:
         "requires_approval": False,
         "approval_status": "none",
         "execution_history": [],
+        "retry_history": [],
         "current_step_index": 0
     }
 
@@ -187,7 +188,7 @@ def classify_and_plan(state: AgentState) -> Dict[str, Any]:
             }
         ]
     # 6. Normal test suite investigation & fix
-    elif "test" in objective and ("failing" in objective or "investigate" in objective or "fix" in objective or "billing calculator" in objective):
+    elif ("test" in objective or "verification" in objective or "investigate" in objective) and ("failing" in objective or "investigat" in objective or "fix" in objective or "billing calculator" in objective):
         plan = [
             {
                 "step_id": 1,
@@ -396,7 +397,7 @@ def execute_tool(state: AgentState) -> Dict[str, Any]:
     span_id = tracer.start_span("execute_tool", inputs={"tool": tool_name, "args": redact_secrets(args)})
 
     # Simulated transient failure test injection support
-    if args.get("simulate_transient_error"):
+    if args.get("simulate_transient_error") or "simulate_transient_error" in state.get("objective", ""):
         if state.get("retry_count", 0) < 1:
             err_msg = "Temporary failure: connection reset by peer (simulated)"
             tracer.record_audit("transient_error", tool_name, args, "error", {"error": err_msg})
@@ -605,9 +606,20 @@ def handle_retry(state: AgentState) -> Dict[str, Any]:
 
     tracer.end_span(span_id, outputs={"retry_status": "re-queued", "backoff_applied": True})
 
+    retry_entry = {
+        "attempt_number": retries,
+        "tool": tool_name,
+        "error": last_err,
+        "backoff_ms": round(delay * 1000, 2),
+        "timestamp": time.time()
+    }
+    history = list(state.get("retry_history", []))
+    history.append(retry_entry)
+
     return {
         "status": "retrying",
-        "last_error": None
+        "last_error": None,
+        "retry_history": history
     }
 
 def record_failure_and_recover(state: AgentState) -> Dict[str, Any]:
