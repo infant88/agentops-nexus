@@ -11,6 +11,7 @@ from backend.agent.policies import (
     is_sensitive_step,
     generate_approval_token
 )
+from backend.agent.approval_manager import default_approval_manager
 from backend.mcp_server.server import default_mcp_server
 from backend.mcp_server.permissions import SecurityError, redact_secrets
 from backend.observability.tracing import get_tracer
@@ -437,6 +438,8 @@ def execute_tool(state: AgentState) -> Dict[str, Any]:
         approval_payload = {
             "patch_id": data.get("patch_id"),
             "file_path": data.get("file_path"),
+            "search_block": args.get("search_block"),
+            "replace_block": args.get("replace_block"),
             "diff": data.get("diff"),
             "explanation": data.get("explanation")
         }
@@ -482,13 +485,28 @@ def pause_for_human_approval(state: AgentState) -> Dict[str, Any]:
 
     decision = "approved"
     feedback = ""
+    approver = "human-reviewer-1"
     if isinstance(human_response, dict):
         decision = human_response.get("decision", "approved")
         feedback = human_response.get("feedback", "")
+        approver = human_response.get("approver", "human-reviewer-1")
     elif isinstance(human_response, str):
         decision = human_response
 
-    approval_token = generate_approval_token(task_id) if decision == "approved" else None
+    patch_payload = state.get("approval_payload") or {}
+    patch_id = patch_payload.get("patch_id", f"patch-{task_id}")
+
+    if decision == "approved":
+        approval_token = default_approval_manager.issue_approval_token(
+            task_id=task_id,
+            action="apply_approved_patch",
+            patch_id=patch_id,
+            arguments=patch_payload,
+            approver_principal=approver
+        )
+    else:
+        approval_token = None
+
     idempotency_key = f"idem-{task_id}-{uuid.uuid4().hex[:8]}"
 
     tracer.record_audit(

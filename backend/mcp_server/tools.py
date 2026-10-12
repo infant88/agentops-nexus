@@ -8,6 +8,7 @@ from typing import Any, Dict, List, Optional
 from pydantic import BaseModel, Field
 
 from backend.mcp_server.permissions import PermissionPolicy, SecurityError
+from backend.agent.approval_manager import default_approval_manager
 
 # In-memory store for pending proposed patches
 _PENDING_PATCHES: Dict[str, Dict[str, Any]] = {}
@@ -238,7 +239,11 @@ class MCPTools:
 
     def apply_approved_patch(self, input_data: ApplyApprovedPatchInput) -> Dict[str, Any]:
         """Applies a patch only after verifying human authorization and idempotency."""
-        # Check idempotency
+        # 1. Require approval token first
+        if not input_data.approval_token or len(input_data.approval_token.strip()) < 8:
+            raise SecurityError("Unauthorized: Valid approval token is required to apply patch.")
+
+        # 2. Check idempotency
         already_applied = self.policy.check_and_record_idempotency(
             input_data.idempotency_key,
             f"Apply patch {input_data.patch_id}"
@@ -251,14 +256,21 @@ class MCPTools:
                 "idempotent_replay": True
             }
 
-        # Validate patch ID
+        # 3. Validate patch ID
         patch = _PENDING_PATCHES.get(input_data.patch_id)
         if not patch:
             raise ValueError(f"Unknown or expired patch ID: {input_data.patch_id}")
 
-        # Check authorization token
-        if not input_data.approval_token or len(input_data.approval_token) < 8:
-            raise SecurityError("Unauthorized: Valid approval token is required to apply patch.")
+        # 4. Cryptographic and binding validation via ApprovalManager
+        try:
+            default_approval_manager.validate_and_consume_token(
+                token=input_data.approval_token,
+                action="apply_approved_patch",
+                patch_id=input_data.patch_id,
+                arguments=patch
+            )
+        except Exception as e:
+            raise SecurityError(f"Unauthorized: Approval boundary check failed: {e}")
 
         full_path = patch["full_path"]
         with open(full_path, "r", encoding="utf-8") as f:
@@ -288,8 +300,9 @@ class MCPTools:
             "patch_id": input_data.patch_id,
             "file_path": patch["file_path"],
             "message": f"Patch successfully applied to '{patch['file_path']}'.",
-            "diff_applied": patch["diff"]
+            "diff_applied": patch.get("diff", "")
         }
+
 
 def get_pending_patch(patch_id: str) -> Optional[Dict[str, Any]]:
     return _PENDING_PATCHES.get(patch_id)
