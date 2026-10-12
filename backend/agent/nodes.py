@@ -73,8 +73,8 @@ def classify_and_plan(state: AgentState) -> Dict[str, Any]:
             "status": "pending"
         }]
     # 2. Path traversal attempts
-    elif "etc/shadow" in objective or "c:\\windows" in objective or "boot.ini" in objective:
-        bad_path = "../../../etc/shadow" if "etc/shadow" in objective else "../../../../boot.ini"
+    elif "etc/shadow" in objective or "c:\\windows" in objective or "boot.ini" in objective or "etc/passwd" in objective:
+        bad_path = "../../../etc/shadow" if ("etc/shadow" in objective or "etc/passwd" in objective) else "../../../../boot.ini"
         if "propose" in objective:
             plan = [{
                 "step_id": 1,
@@ -580,6 +580,34 @@ def verify_result(state: AgentState) -> Dict[str, Any]:
     return {
         "verification_result": verification,
         "status": "verified" if passed else "verification_failed"
+    }
+
+def handle_retry(state: AgentState) -> Dict[str, Any]:
+    task_id = state["task_id"]
+    tracer = get_tracer(task_id)
+    retries = state.get("retry_count", 0)
+    delay = calculate_backoff_delay(retries)
+    last_err = state.get("last_error", "Transient failure")
+    tool_call = state.get("current_tool_call")
+    tool_name = tool_call.get("tool") if tool_call else None
+
+    span_id = tracer.start_span("handle_retry", inputs={"retry_count": retries, "error": last_err, "delay_sec": delay})
+
+    tracer.record_audit(
+        event_type="retry_attempt",
+        tool_name=tool_name,
+        parameters={"retry_count": retries, "backoff_delay_sec": delay, "error": last_err},
+        outcome="retrying"
+    )
+
+    if delay > 0:
+        time.sleep(min(delay, 0.5))
+
+    tracer.end_span(span_id, outputs={"retry_status": "re-queued", "backoff_applied": True})
+
+    return {
+        "status": "retrying",
+        "last_error": None
     }
 
 def record_failure_and_recover(state: AgentState) -> Dict[str, Any]:

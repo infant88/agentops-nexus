@@ -77,11 +77,12 @@ flowchart TD
 
 ### Module A: Stateful LangGraph AI Workflow
 - **State Machine**: Decomposes objectives into typed plans with tool targeting, retry counters, and history logs.
-- **Persistent Checkpointing & Interrupts**: Pauses execution using `interrupt()` before destructive write operations without holding active threads. State is persisted to disk checkpointers.
-- **Bounded Exponential Backoff**: Transient errors (timeouts, rate limits, lock contention) recover within a 3-retry budget. Deterministic errors (syntax errors, validation errors) fail fast.
+- **Durable Checkpointing Across Process Restarts**: Uses `SqliteSaver` persisting thread states and interrupt frames to disk (`checkpoints.sqlite`). Pauses execution via `interrupt()` before destructive actions and resumes seamlessly even across complete server restarts.
+- **Bounded Exponential Retry Loop**: Routes transient failures (timeouts, rate limits, network resets) through a dedicated `handle_retry` backoff node within a 3-retry budget. Deterministic errors (syntax errors, security violations) fail fast directly to safe fallback.
 - **Result Verification Gate**: Executes the allowlisted test runner (`python -m unittest test_calculator.py`) to verify that the proposed patch actually fixes failing tests before completing.
 
 ### Module B: MCP Server & Security Sandbox
+- **Official Model Context Protocol (MCP) Server**: Implements the official Anthropic MCP 2.x standard (`backend/mcp_server/protocol_server.py`) over both stdio and SSE transports. Discovered and invoked natively by Claude Desktop, Cursor, Zed, and the official `mcp.client` Python SDK.
 - **Standardized Tool Registry**: Exposes 6 typed tools via the Model Context Protocol:
   - `search_repository`: Safe file/regex searching in sandbox repo.
   - `get_project_status`: Project ticket and test run status.
@@ -213,14 +214,23 @@ Open `http://localhost:3000` in your browser.
 
 ### 3. Run Automated Tests
 ```bash
-# Run all unit and integration tests (100% pass)
+# Run all unit and integration tests (16 passed)
 python -m pytest
 
 # Run the 40-case benchmark evaluation suite
-python backend/evaluation/runner.py
+python -m backend.evaluation.runner
 ```
 
-### 4. Run via Docker Compose
+### 4. Official MCP Protocol Server (External Client Integration)
+```bash
+# Launch official MCP server over stdio for Claude Desktop, Cursor, or Zed:
+python -m backend.mcp_server.protocol_server --transport stdio
+
+# Or launch as SSE server:
+python -m backend.mcp_server.protocol_server --transport sse --port 8001
+```
+
+### 5. Run via Docker Compose
 ```bash
 docker compose up --build
 ```

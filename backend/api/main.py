@@ -187,8 +187,15 @@ def get_task(task_id: str):
 def submit_approval(task_id: str, req: ApprovalDecisionRequest):
     session = _ACTIVE_SESSIONS.get(task_id)
     if not session:
-        # Reconstruct graph with memory state or fail if not found
-        raise HTTPException(status_code=400, detail="Active execution thread not found or already completed.")
+        # Restore execution thread from durable SQLite checkpointer
+        app_instance = build_agent_graph()
+        config = {"configurable": {"thread_id": task_id}}
+        session = {
+            "app": app_instance,
+            "config": config,
+            "state": {}
+        }
+        _ACTIVE_SESSIONS[task_id] = session
 
     app_instance = session["app"]
     config = session["config"]
@@ -273,11 +280,15 @@ def get_task_audit(task_id: str):
 # ----------------- MCP Tools Endpoints -----------------
 
 @app.get("/api/tools")
+@app.get("/api/mcp/tools")
 def list_mcp_tools():
+    """Expose tools conforming to MCP JSON schema tool discovery."""
     return default_mcp_server.list_tools()
 
 @app.post("/api/tools/execute")
+@app.post("/api/mcp/call")
 def execute_mcp_tool(req: ExecuteToolRequest):
+    """Execute an MCP tool call with validation, secret redaction, and sandboxing."""
     return default_mcp_server.call_tool(req.tool_name, req.arguments)
 
 # ----------------- Evaluation Benchmark Endpoints -----------------
