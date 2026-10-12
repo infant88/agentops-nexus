@@ -1,0 +1,62 @@
+name: AgentOps Nexus CI
+
+on:
+  push:
+    branches: [main, feat/security-evaluation-hardening]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-and-verify:
+    name: Unit Tests and Benchmark Evaluation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install project
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+
+      - name: Check Python imports
+        run: python -c "import backend; print('Backend import OK')"
+
+      - name: Run automated test suite
+        run: python -m pytest -v
+
+      - name: Run benchmark evaluation runner
+        run: python -m backend.evaluation.runner
+
+  security-and-lint:
+    name: Security and Static Analysis Checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install security scanning tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install ruff bandit
+
+      - name: Secret and security analysis
+        run: |
+          bandit -r backend/ -ll -ii || true
+
+      - name: Lint and syntax checks
+        run: |
+          ruff check backend/ || true
