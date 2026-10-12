@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Navbar } from './components/Navbar';
 import { WorkflowGraph } from './components/WorkflowGraph';
 import { TaskConsole } from './components/TaskConsole';
@@ -6,9 +6,11 @@ import { ApprovalModal } from './components/ApprovalModal';
 import { EvaluationSuite } from './components/EvaluationSuite';
 import { TraceViewer } from './components/TraceViewer';
 import { MCPExplorer } from './components/MCPExplorer';
+import { PrivacyPolicy } from './components/PrivacyPolicy';
+import { TermsConditions } from './components/TermsConditions';
 
 export const App: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'orchestrator' | 'approvals' | 'evaluation' | 'observability' | 'mcp'>('orchestrator');
+  const [activeTab, setActiveTab] = useState<'orchestrator' | 'approvals' | 'evaluation' | 'observability' | 'mcp' | 'privacy' | 'terms'>('orchestrator');
   const [currentTask, setCurrentTask] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [approvalLoading, setApprovalLoading] = useState(false);
@@ -26,9 +28,6 @@ export const App: React.FC = () => {
       if (res.ok) {
         const data = await res.json();
         setCurrentTask(data);
-        if (data.approval_required) {
-          // Switch to approval or highlight
-        }
       }
     } catch (err) {
       console.error('Task submission error', err);
@@ -155,18 +154,59 @@ export const App: React.FC = () => {
         {/* Tab 5: MCP & Sandbox */}
         {activeTab === 'mcp' && <MCPExplorer />}
 
+        {/* Tab 6: Privacy Policy */}
+        {activeTab === 'privacy' && <PrivacyPolicy />}
+
+        {/* Tab 7: Terms and Conditions */}
+        {activeTab === 'terms' && <TermsConditions />}
+
       </main>
 
       {/* Footer */}
       <footer style={{
-        borderTop: '1px solid rgba(56, 96, 160, 0.2)',
+        borderTop: '1px solid #1e293b',
         padding: '16px 24px',
-        textAlign: 'center',
         fontSize: '12px',
         color: '#64748b',
-        background: 'rgba(7, 13, 24, 0.7)'
+        background: '#090d16',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        flexWrap: 'wrap',
+        gap: '12px'
       }}>
-        AgentOps Nexus — Stateful LangGraph Orchestration · Sandboxed MCP Tool Ecosystem · Automated Benchmark Evaluation
+        <div>
+          AgentOps Nexus: Stateful LangGraph Orchestration, Sandboxed MCP Tools, Automated Evaluation
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <button
+            onClick={() => setActiveTab('privacy')}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#94a3b8',
+              cursor: 'pointer',
+              fontSize: '12px',
+              padding: 0
+            }}
+          >
+            Privacy Policy
+          </button>
+          <span style={{ color: '#334155' }}>|</span>
+          <button
+            onClick={() => setActiveTab('terms')}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#94a3b8',
+              cursor: 'pointer',
+              fontSize: '12px',
+              padding: 0
+            }}
+          >
+            Terms and Conditions
+          </button>
+        </div>
       </footer>
     </div>
   );

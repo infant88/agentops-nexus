@@ -5,14 +5,9 @@ import {
   AlertTriangle, 
   ShieldAlert, 
   RotateCcw, 
-  Check, 
-  X, 
   ArrowRight, 
-  ArrowDown, 
-  Sparkles,
-  FileCode,
-  Search,
-  Database,
+  FileCode, 
+  Search, 
   TerminalSquare,
   Cpu
 } from 'lucide-react';
@@ -34,7 +29,6 @@ export const WorkflowGraph: React.FC<WorkflowGraphProps> = ({
   approvalStatus,
   lastError
 }) => {
-  // Determine highlight states
   const isPlanning = currentStatus === 'planning';
   const isExecuting = currentStatus === 'executing';
   const isWaitingApproval = currentStatus === 'waiting_approval' || requiresApproval;
@@ -44,171 +38,171 @@ export const WorkflowGraph: React.FC<WorkflowGraphProps> = ({
   const isFailed = currentStatus === 'failed';
 
   return (
-    <div className="nexus-card" style={{ padding: '24px', overflowX: 'auto' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+    <div className="nexus-card" style={{ padding: '20px', overflowX: 'auto' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
         <div>
-          <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#f8fafc', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Sparkles size={18} color="#06b6d4" />
-            LangGraph Orchestration State Machine
+          <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#f8fafc', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Cpu size={17} color="#0ea5e9" />
+            <span>LangGraph Orchestration State Machine</span>
           </h3>
-          <p style={{ fontSize: '12px', color: '#94a3b8' }}>
-            State transitions, bounded retries, checkpoint interrupts, and verification gates
+          <p style={{ fontSize: '12px', color: '#64748b' }}>
+            Deterministic state transitions, bounded retries, checkpoint interrupts, and test verification
           </p>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '11px' }}>
           <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#06b6d4' }}></span>
+            <span style={{ width: '7px', height: '7px', borderRadius: '2px', background: '#0ea5e9' }}></span>
             Active Node
           </span>
           <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981' }}></span>
+            <span style={{ width: '7px', height: '7px', borderRadius: '2px', background: '#10b981' }}></span>
             Completed
           </span>
           <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#f59e0b' }}></span>
-            Approval Gate
+            <span style={{ width: '7px', height: '7px', borderRadius: '2px', background: '#d97706' }}></span>
+            Approval Checkpoint
           </span>
         </div>
       </div>
 
-      {/* Visual Flowchart Representation */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', minWidth: '820px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', minWidth: '820px' }}>
         
         {/* Row 1: Pipeline Initiation */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '18px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '14px' }}>
           <div style={{
-            padding: '10px 18px',
-            borderRadius: '10px',
-            background: isPlanning || currentStatus !== 'pending' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(30, 52, 92, 0.4)',
-            border: `1px solid ${isPlanning ? '#06b6d4' : '#10b981'}`,
+            padding: '9px 16px',
+            borderRadius: '4px',
+            background: isPlanning || currentStatus !== 'pending' ? 'rgba(16, 185, 129, 0.12)' : '#0d1322',
+            border: `1px solid ${isPlanning ? '#0ea5e9' : '#10b981'}`,
             color: '#f8fafc',
             display: 'flex',
             alignItems: 'center',
             gap: '8px',
-            fontSize: '13px',
+            fontSize: '12px',
             fontWeight: 600
           }}>
-            <CheckCircle2 size={15} color="#10b981" />
+            <CheckCircle2 size={14} color="#10b981" />
             <span>1. Receive Task</span>
           </div>
 
-          <ArrowRight size={18} color="#64748b" />
+          <ArrowRight size={16} color="#475569" />
 
           <div style={{
-            padding: '10px 18px',
-            borderRadius: '10px',
-            background: isPlanning ? 'rgba(6, 182, 212, 0.2)' : (plan && plan.length > 0 ? 'rgba(16, 185, 129, 0.15)' : 'rgba(30, 52, 92, 0.4)'),
-            border: `1px solid ${isPlanning ? '#06b6d4' : (plan && plan.length > 0 ? '#10b981' : 'rgba(56, 96, 160, 0.3)')}`,
+            padding: '9px 16px',
+            borderRadius: '4px',
+            background: isPlanning ? 'rgba(14, 165, 233, 0.12)' : (plan && plan.length > 0 ? 'rgba(16, 185, 129, 0.12)' : '#0d1322'),
+            border: `1px solid ${isPlanning ? '#0ea5e9' : (plan && plan.length > 0 ? '#10b981' : '#1e293b')}`,
             color: '#f8fafc',
             display: 'flex',
             alignItems: 'center',
             gap: '8px',
-            fontSize: '13px',
+            fontSize: '12px',
             fontWeight: 600
           }} className={isPlanning ? 'node-active' : ''}>
-            <TerminalSquare size={15} color="#38bdf8" />
+            <TerminalSquare size={14} color="#38bdf8" />
             <span>2. Classify & Plan ({plan ? plan.length : 0} steps)</span>
           </div>
 
-          <ArrowRight size={18} color="#64748b" />
+          <ArrowRight size={16} color="#475569" />
 
           <div style={{
-            padding: '10px 18px',
-            borderRadius: '10px',
-            background: isExecuting ? 'rgba(6, 182, 212, 0.2)' : 'rgba(30, 52, 92, 0.4)',
-            border: `1px solid ${isExecuting ? '#06b6d4' : 'rgba(56, 96, 160, 0.3)'}`,
+            padding: '9px 16px',
+            borderRadius: '4px',
+            background: isExecuting ? 'rgba(14, 165, 233, 0.12)' : '#0d1322',
+            border: `1px solid ${isExecuting ? '#0ea5e9' : '#1e293b'}`,
             color: '#f8fafc',
             display: 'flex',
             alignItems: 'center',
             gap: '8px',
-            fontSize: '13px',
+            fontSize: '12px',
             fontWeight: 600
           }} className={isExecuting ? 'node-active' : ''}>
-            <Search size={15} color="#a78bfa" />
+            <Search size={14} color="#38bdf8" />
             <span>3. Select Tool (Step {currentStepIndex + 1})</span>
           </div>
         </div>
 
         {/* Row 2: Validation & Execution Loop */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '18px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '14px' }}>
           <div style={{
-            padding: '10px 18px',
-            borderRadius: '10px',
-            background: 'rgba(30, 52, 92, 0.4)',
-            border: '1px solid rgba(56, 96, 160, 0.3)',
+            padding: '9px 16px',
+            borderRadius: '4px',
+            background: '#0d1322',
+            border: '1px solid #1e293b',
             color: '#f8fafc',
             display: 'flex',
             alignItems: 'center',
             gap: '8px',
-            fontSize: '13px',
+            fontSize: '12px',
             fontWeight: 600
           }}>
-            <ShieldAlert size={15} color="#06b6d4" />
+            <ShieldAlert size={14} color="#0ea5e9" />
             <span>4. Validate Permissions & Inputs</span>
           </div>
 
-          <ArrowRight size={18} color="#64748b" />
+          <ArrowRight size={16} color="#475569" />
 
           <div style={{
-            padding: '10px 18px',
-            borderRadius: '10px',
-            background: 'rgba(30, 52, 92, 0.4)',
-            border: '1px solid rgba(56, 96, 160, 0.3)',
+            padding: '9px 16px',
+            borderRadius: '4px',
+            background: '#0d1322',
+            border: '1px solid #1e293b',
             color: '#f8fafc',
             display: 'flex',
             alignItems: 'center',
             gap: '8px',
-            fontSize: '13px',
+            fontSize: '12px',
             fontWeight: 600
           }}>
-            <Cpu size={15} color="#60a5fa" />
+            <Cpu size={14} color="#38bdf8" />
             <span>5. Execute MCP Tool</span>
           </div>
         </div>
 
         {/* Row 3: Decision Gate (Approval Interrupt vs Safe Path) */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginTop: '6px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginTop: '4px' }}>
           
           {/* Sensitive Action Branch */}
           <div style={{
-            padding: '16px',
-            borderRadius: '12px',
-            background: isWaitingApproval ? 'rgba(245, 158, 11, 0.12)' : 'rgba(15, 27, 48, 0.5)',
-            border: `1px solid ${isWaitingApproval ? '#f59e0b' : 'rgba(56, 96, 160, 0.25)'}`,
-            position: 'relative'
-          }} className={isWaitingApproval ? 'approval-gate-pulse' : ''}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-              <span style={{ fontSize: '13px', fontWeight: 700, color: '#fbbf24', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <AlertTriangle size={16} />
+            padding: '14px',
+            borderRadius: '4px',
+            background: isWaitingApproval ? 'rgba(217, 119, 6, 0.08)' : '#0d1322',
+            border: `1px solid ${isWaitingApproval ? '#d97706' : '#1e293b'}`
+          }} className={isWaitingApproval ? 'approval-gate-active' : ''}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+              <span style={{ fontSize: '13px', fontWeight: 600, color: '#fbbf24', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <AlertTriangle size={15} />
                 Human Approval Gate (Interrupt Checkpoint)
               </span>
-              <span className={`badge ${isWaitingApproval ? 'badge-warning' : (isApproved ? 'badge-success' : 'badge-info')}`}>
-                {isWaitingApproval ? 'PAUSED / WAITING' : (isApproved ? 'APPROVED' : (isRejected ? 'REJECTED' : 'READY'))}
+              <span className={`badge ${isWaitingApproval ? 'badge-warning' : (isApproved ? 'badge-success' : 'badge-neutral')}`}>
+                {isWaitingApproval ? 'PAUSED / WAITING' : (isApproved ? 'APPROVED' : (isRejected ? 'REJECTED' : 'IDLE'))}
               </span>
             </div>
-            <p style={{ fontSize: '11px', color: '#94a3b8', marginBottom: '12px' }}>
-              LangGraph persistent checkpoint holds state on disk before allowing destructive source code patches or write mutations.
+            <p style={{ fontSize: '11px', color: '#64748b', marginBottom: '10px' }}>
+              LangGraph checkpointer serializes execution state to disk before applying file patch mutations.
             </p>
-            <div style={{ display: 'flex', gap: '10px' }}>
+            <div style={{ display: 'flex', gap: '8px' }}>
               <div style={{
                 flex: 1,
-                padding: '8px',
-                borderRadius: '6px',
-                background: isApproved ? 'rgba(16, 185, 129, 0.2)' : 'rgba(30, 52, 92, 0.3)',
-                border: `1px solid ${isApproved ? '#10b981' : 'transparent'}`,
+                padding: '6px',
+                borderRadius: '4px',
+                background: isApproved ? 'rgba(16, 185, 129, 0.15)' : '#090d16',
+                border: `1px solid ${isApproved ? '#10b981' : '#1e293b'}`,
                 fontSize: '11px',
-                textAlign: 'center'
+                textAlign: 'center',
+                color: isApproved ? '#34d399' : '#94a3b8'
               }}>
                 Approved: Apply Patch
               </div>
               <div style={{
                 flex: 1,
-                padding: '8px',
-                borderRadius: '6px',
-                background: isRejected ? 'rgba(244, 63, 94, 0.2)' : 'rgba(30, 52, 92, 0.3)',
-                border: `1px solid ${isRejected ? '#f43f5e' : 'transparent'}`,
+                padding: '6px',
+                borderRadius: '4px',
+                background: isRejected ? 'rgba(225, 29, 72, 0.15)' : '#090d16',
+                border: `1px solid ${isRejected ? '#e11d48' : '#1e293b'}`,
                 fontSize: '11px',
-                textAlign: 'center'
+                textAlign: 'center',
+                color: isRejected ? '#fb7185' : '#94a3b8'
               }}>
                 Rejected: Abort / Revise
               </div>
@@ -217,27 +211,27 @@ export const WorkflowGraph: React.FC<WorkflowGraphProps> = ({
 
           {/* Failure Recovery & Retry Branch */}
           <div style={{
-            padding: '16px',
-            borderRadius: '12px',
-            background: isFailed ? 'rgba(244, 63, 94, 0.12)' : 'rgba(15, 27, 48, 0.5)',
-            border: `1px solid ${isFailed ? '#f43f5e' : 'rgba(56, 96, 160, 0.25)'}`
+            padding: '14px',
+            borderRadius: '4px',
+            background: isFailed ? 'rgba(225, 29, 72, 0.08)' : '#0d1322',
+            border: `1px solid ${isFailed ? '#e11d48' : '#1e293b'}`
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-              <span style={{ fontSize: '13px', fontWeight: 700, color: '#f8fafc', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <RotateCcw size={16} color="#60a5fa" />
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+              <span style={{ fontSize: '13px', fontWeight: 600, color: '#f8fafc', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <RotateCcw size={15} color="#38bdf8" />
                 Transient Retry & Bounded Recovery
               </span>
-              <span className="badge badge-info">3 Tries Max</span>
+              <span className="badge badge-neutral">Max 3 Retries</span>
             </div>
-            <p style={{ fontSize: '11px', color: '#94a3b8', marginBottom: '12px' }}>
-              Bounded exponential backoff retries transient timeouts. Fail-fast triggers on security violations or malformed queries.
+            <p style={{ fontSize: '11px', color: '#64748b', marginBottom: '10px' }}>
+              Bounded exponential backoff handles transient network errors. Zero retries on permission or security violations.
             </p>
             {lastError && (
               <div style={{
-                padding: '8px 10px',
-                borderRadius: '6px',
-                background: 'rgba(244, 63, 94, 0.15)',
-                border: '1px solid rgba(244, 63, 94, 0.3)',
+                padding: '6px 8px',
+                borderRadius: '4px',
+                background: 'rgba(225, 29, 72, 0.1)',
+                border: '1px solid rgba(225, 29, 72, 0.25)',
                 fontSize: '11px',
                 color: '#fca5a5',
                 fontFamily: 'monospace'
@@ -249,56 +243,56 @@ export const WorkflowGraph: React.FC<WorkflowGraphProps> = ({
         </div>
 
         {/* Row 4: Terminal Pipeline Stages */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '18px', marginTop: '10px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '14px', marginTop: '6px' }}>
           <div style={{
-            padding: '10px 18px',
-            borderRadius: '10px',
-            background: isVerified ? 'rgba(16, 185, 129, 0.2)' : 'rgba(30, 52, 92, 0.4)',
-            border: `1px solid ${isVerified ? '#10b981' : 'rgba(56, 96, 160, 0.3)'}`,
+            padding: '9px 16px',
+            borderRadius: '4px',
+            background: isVerified ? 'rgba(16, 185, 129, 0.12)' : '#0d1322',
+            border: `1px solid ${isVerified ? '#10b981' : '#1e293b'}`,
             color: '#f8fafc',
             display: 'flex',
             alignItems: 'center',
             gap: '8px',
-            fontSize: '13px',
+            fontSize: '12px',
             fontWeight: 600
           }}>
-            <CheckCircle2 size={15} color="#10b981" />
+            <CheckCircle2 size={14} color="#10b981" />
             <span>Verify Result (Unit Tests)</span>
           </div>
 
-          <ArrowRight size={18} color="#64748b" />
+          <ArrowRight size={16} color="#475569" />
 
           <div style={{
-            padding: '10px 18px',
-            borderRadius: '10px',
-            background: isVerified ? 'rgba(16, 185, 129, 0.2)' : 'rgba(30, 52, 92, 0.4)',
-            border: `1px solid ${isVerified ? '#10b981' : 'rgba(56, 96, 160, 0.3)'}`,
+            padding: '9px 16px',
+            borderRadius: '4px',
+            background: isVerified ? 'rgba(16, 185, 129, 0.12)' : '#0d1322',
+            border: `1px solid ${isVerified ? '#10b981' : '#1e293b'}`,
             color: '#f8fafc',
             display: 'flex',
             alignItems: 'center',
             gap: '8px',
-            fontSize: '13px',
+            fontSize: '12px',
             fontWeight: 600
           }}>
-            <Clock size={15} color="#06b6d4" />
+            <Clock size={14} color="#0ea5e9" />
             <span>Evaluate & Trace Telemetry</span>
           </div>
 
-          <ArrowRight size={18} color="#64748b" />
+          <ArrowRight size={16} color="#475569" />
 
           <div style={{
-            padding: '10px 18px',
-            borderRadius: '10px',
-            background: isVerified ? 'rgba(16, 185, 129, 0.2)' : (isFailed ? 'rgba(244, 63, 94, 0.2)' : 'rgba(30, 52, 92, 0.4)'),
-            border: `1px solid ${isVerified ? '#10b981' : (isFailed ? '#f43f5e' : 'rgba(56, 96, 160, 0.3)')}`,
+            padding: '9px 16px',
+            borderRadius: '4px',
+            background: isVerified ? 'rgba(16, 185, 129, 0.12)' : (isFailed ? 'rgba(225, 29, 72, 0.12)' : '#0d1322'),
+            border: `1px solid ${isVerified ? '#10b981' : (isFailed ? '#e11d48' : '#1e293b')}`,
             color: '#f8fafc',
             display: 'flex',
             alignItems: 'center',
             gap: '8px',
-            fontSize: '13px',
+            fontSize: '12px',
             fontWeight: 600
           }}>
-            <FileCode size={15} color="#a78bfa" />
+            <FileCode size={14} color="#cbd5e1" />
             <span>Return Executive Report</span>
           </div>
         </div>

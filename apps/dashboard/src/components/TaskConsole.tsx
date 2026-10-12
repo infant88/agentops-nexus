@@ -2,17 +2,12 @@ import React, { useState } from 'react';
 import { 
   Play, 
   Terminal, 
-  Sparkles, 
   CheckCircle2, 
-  AlertCircle, 
   Clock, 
   Layers, 
   ChevronDown, 
   ChevronRight,
-  ShieldCheck,
-  FileCheck2,
-  DollarSign,
-  Cpu
+  FileCheck2
 } from 'lucide-react';
 
 interface TaskConsoleProps {
@@ -60,69 +55,69 @@ export const TaskConsole: React.FC<TaskConsoleProps> = ({
   const verification = currentTask?.verification_result;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
       
       {/* Objective Input Card */}
-      <div className="nexus-card" style={{ padding: '22px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
+      <div className="nexus-card" style={{ padding: '20px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Terminal size={18} color="#06b6d4" />
-            <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#f8fafc' }}>
-              Agent Mission Objective
+            <Terminal size={16} color="#0ea5e9" />
+            <h3 style={{ fontSize: '14px', fontWeight: 600, color: '#f8fafc' }}>
+              Mission Objective Input
             </h3>
           </div>
-          <span style={{ fontSize: '12px', color: '#94a3b8' }}>
-            Select a preset or input custom prompt
+          <span style={{ fontSize: '11px', color: '#64748b' }}>
+            Select verified preset or input custom prompt
           </span>
         </div>
 
         {/* Preset Buttons */}
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '14px' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '12px' }}>
           {presets.map((p, idx) => (
             <button
               key={idx}
               type="button"
               onClick={() => setObjective(p.text)}
               className="btn-secondary"
-              style={{ fontSize: '11px', padding: '5px 11px', borderRadius: '6px' }}
+              style={{ fontSize: '11px', padding: '5px 10px', borderRadius: '4px' }}
             >
-              <Sparkles size={12} color="#818cf8" />
               <span>{p.title}</span>
             </button>
           ))}
         </div>
 
         {/* Text Input Area */}
-        <div style={{ display: 'flex', gap: '12px' }}>
+        <div style={{ display: 'flex', gap: '10px' }}>
           <textarea
             value={objective}
             onChange={(e) => setObjective(e.target.value)}
-            placeholder="Describe the agent mission..."
+            placeholder="Specify task objective..."
             rows={3}
             style={{
               flex: 1,
-              padding: '12px 14px',
-              borderRadius: '10px',
-              background: '#040812',
-              border: '1px solid rgba(56, 96, 160, 0.3)',
+              padding: '10px 12px',
+              borderRadius: '4px',
+              background: '#040711',
+              border: '1px solid #1e293b',
               color: '#f8fafc',
               fontSize: '13px',
               fontFamily: 'inherit',
-              resize: 'none'
+              resize: 'none',
+              outline: 'none'
             }}
           />
           <button
             onClick={() => onSubmitTask(objective)}
             disabled={loading || !objective.trim()}
             className="btn-primary"
-            style={{ minWidth: '150px', justifyContent: 'center' }}
+            style={{ minWidth: '140px', justifyContent: 'center' }}
           >
             {loading ? (
-              <span>Orchestrating...</span>
+              <span>Executing...</span>
             ) : (
               <>
-                <Play size={16} fill="white" />
-                <span>Run Agent</span>
+                <Play size={15} fill="white" />
+                <span>Execute Mission</span>
               </>
             )}
           </button>
@@ -131,13 +126,13 @@ export const TaskConsole: React.FC<TaskConsoleProps> = ({
 
       {/* Plan & Step History */}
       {plan && plan.length > 0 && (
-        <div className="nexus-card" style={{ padding: '22px' }}>
-          <h4 style={{ fontSize: '14px', fontWeight: 700, color: '#f8fafc', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Layers size={16} color="#38bdf8" />
-            <span>Structured Plan Decomposition ({plan.length} Steps)</span>
+        <div className="nexus-card" style={{ padding: '20px' }}>
+          <h4 style={{ fontSize: '14px', fontWeight: 600, color: '#f8fafc', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Layers size={15} color="#38bdf8" />
+            <span>Plan Decomposition ({plan.length} Steps)</span>
           </h4>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {plan.map((step: any, idx: number) => {
               const isDone = history.some((h: any) => h.step_id === step.step_id);
               const isSensitive = step.is_sensitive;
@@ -148,36 +143,36 @@ export const TaskConsole: React.FC<TaskConsoleProps> = ({
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    padding: '10px 14px',
-                    borderRadius: '8px',
-                    background: isDone ? 'rgba(16, 185, 129, 0.08)' : 'rgba(15, 23, 42, 0.4)',
-                    border: `1px solid ${isDone ? 'rgba(16, 185, 129, 0.3)' : 'rgba(56, 96, 160, 0.2)'}`
+                    padding: '8px 12px',
+                    borderRadius: '4px',
+                    background: isDone ? 'rgba(16, 185, 129, 0.08)' : '#090d16',
+                    border: `1px solid ${isDone ? 'rgba(16, 185, 129, 0.25)' : '#1e293b'}`
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                     {isDone ? (
-                      <CheckCircle2 size={16} color="#10b981" />
+                      <CheckCircle2 size={15} color="#10b981" />
                     ) : (
                       <span style={{
-                        width: '18px',
-                        height: '18px',
-                        borderRadius: '50%',
-                        border: '1px solid #64748b',
+                        width: '16px',
+                        height: '16px',
+                        borderRadius: '2px',
+                        border: '1px solid #475569',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        fontSize: '11px',
+                        fontSize: '10px',
                         color: '#94a3b8'
                       }}>
                         {idx + 1}
                       </span>
                     )}
-                    <span style={{ fontSize: '13px', color: isDone ? '#f8fafc' : '#cbd5e1' }}>
+                    <span style={{ fontSize: '12px', color: isDone ? '#f8fafc' : '#cbd5e1' }}>
                       {step.description}
                     </span>
                   </div>
 
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                     {isSensitive && (
                       <span className="badge badge-warning" style={{ fontSize: '10px' }}>
                         Requires Approval
@@ -196,39 +191,39 @@ export const TaskConsole: React.FC<TaskConsoleProps> = ({
 
       {/* Execution History Timeline */}
       {history && history.length > 0 && (
-        <div className="nexus-card" style={{ padding: '22px' }}>
-          <h4 style={{ fontSize: '14px', fontWeight: 700, color: '#f8fafc', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Clock size={16} color="#a78bfa" />
-            <span>Tool Execution Evidence Log ({history.length} operations)</span>
+        <div className="nexus-card" style={{ padding: '20px' }}>
+          <h4 style={{ fontSize: '14px', fontWeight: 600, color: '#f8fafc', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Clock size={15} color="#38bdf8" />
+            <span>Execution Evidence Log ({history.length} operations)</span>
           </h4>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {history.map((h: any, idx: number) => {
               const isExpanded = !!expandedSteps[idx];
               return (
                 <div
                   key={idx}
                   style={{
-                    borderRadius: '8px',
-                    background: 'rgba(11, 19, 36, 0.6)',
-                    border: '1px solid rgba(56, 96, 160, 0.25)',
+                    borderRadius: '4px',
+                    background: '#090d16',
+                    border: '1px solid #1e293b',
                     overflow: 'hidden'
                   }}
                 >
                   <div
                     onClick={() => toggleStep(idx)}
                     style={{
-                      padding: '10px 14px',
+                      padding: '9px 12px',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'space-between',
                       cursor: 'pointer',
-                      background: 'rgba(15, 27, 48, 0.4)'
+                      background: '#0d1322'
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                       {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
-                      <span style={{ fontWeight: 600, fontSize: '13px', color: '#38bdf8' }}>
+                      <span style={{ fontWeight: 600, fontSize: '12px', color: '#38bdf8' }}>
                         {h.tool}
                       </span>
                       <span className="badge badge-success" style={{ fontSize: '10px' }}>
@@ -236,41 +231,43 @@ export const TaskConsole: React.FC<TaskConsoleProps> = ({
                       </span>
                     </div>
 
-                    <span style={{ fontSize: '11px', color: '#94a3b8' }}>
+                    <span style={{ fontSize: '11px', color: '#64748b' }}>
                       Step #{idx + 1}
                     </span>
                   </div>
 
                   {isExpanded && (
-                    <div style={{ padding: '12px 14px', borderTop: '1px solid rgba(56, 96, 160, 0.2)' }}>
+                    <div style={{ padding: '10px 12px', borderTop: '1px solid #1e293b' }}>
                       <div style={{ marginBottom: '8px' }}>
-                        <span style={{ fontSize: '11px', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>
-                          Arguments (Secrets Redacted):
+                        <span style={{ fontSize: '11px', color: '#64748b', display: 'block', marginBottom: '3px' }}>
+                          Arguments (Redacted):
                         </span>
                         <pre style={{
-                          background: '#040812',
-                          padding: '8px 10px',
-                          borderRadius: '6px',
+                          background: '#040711',
+                          padding: '6px 8px',
+                          borderRadius: '4px',
                           fontSize: '11px',
                           color: '#cbd5e1',
-                          overflowX: 'auto'
+                          overflowX: 'auto',
+                          border: '1px solid #172033'
                         }}>
                           {JSON.stringify(h.arguments, null, 2)}
                         </pre>
                       </div>
 
                       <div>
-                        <span style={{ fontSize: '11px', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>
+                        <span style={{ fontSize: '11px', color: '#64748b', display: 'block', marginBottom: '3px' }}>
                           Tool Output:
                         </span>
                         <pre style={{
-                          background: '#040812',
-                          padding: '8px 10px',
-                          borderRadius: '6px',
+                          background: '#040711',
+                          padding: '6px 8px',
+                          borderRadius: '4px',
                           fontSize: '11px',
                           color: '#34d399',
                           overflowX: 'auto',
-                          maxHeight: '180px'
+                          maxHeight: '160px',
+                          border: '1px solid #172033'
                         }}>
                           {JSON.stringify(h.output, null, 2)}
                         </pre>
@@ -287,87 +284,86 @@ export const TaskConsole: React.FC<TaskConsoleProps> = ({
       {/* Final Executive Report Card */}
       {finalReport && (
         <div style={{
-          padding: '24px',
-          borderRadius: '16px',
-          background: 'linear-gradient(135deg, rgba(6, 78, 59, 0.25) 0%, rgba(15, 23, 42, 0.8) 100%)',
-          border: '1px solid rgba(16, 185, 129, 0.45)',
-          boxShadow: '0 8px 30px rgba(0, 0, 0, 0.4)'
+          padding: '20px',
+          borderRadius: '6px',
+          background: '#09151c',
+          border: '1px solid #047857'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <FileCheck2 size={22} color="#10b981" />
-              <h3 style={{ fontSize: '17px', fontWeight: 700, color: '#f0fdf4' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <FileCheck2 size={18} color="#10b981" />
+              <h3 style={{ fontSize: '15px', fontWeight: 600, color: '#f0fdf4' }}>
                 Executive Mission Report
               </h3>
             </div>
-            <span className="badge badge-success" style={{ fontSize: '12px' }}>
-              Terminal Status: {currentTask.status || 'COMPLETED'}
+            <span className="badge badge-success">
+              Status: {currentTask.status || 'COMPLETED'}
             </span>
           </div>
 
-          <div style={{ marginBottom: '14px' }}>
-            <span style={{ fontSize: '12px', color: '#86efac', fontWeight: 600, display: 'block', marginBottom: '4px' }}>
+          <div style={{ marginBottom: '12px' }}>
+            <span style={{ fontSize: '11px', color: '#86efac', fontWeight: 600, display: 'block', marginBottom: '3px' }}>
               Root Cause Identification:
             </span>
-            <p style={{ fontSize: '13px', color: '#e2e8f0', background: 'rgba(15, 23, 42, 0.6)', padding: '10px 14px', borderRadius: '8px' }}>
+            <p style={{ fontSize: '12px', color: '#e2e8f0', background: '#040711', padding: '8px 12px', borderRadius: '4px', border: '1px solid #1e293b' }}>
               {finalReport.root_cause}
             </p>
           </div>
 
           {verification && (
-            <div style={{ marginBottom: '16px' }}>
-              <span style={{ fontSize: '12px', color: '#86efac', fontWeight: 600, display: 'block', marginBottom: '4px' }}>
-                Automated Verification Status:
+            <div style={{ marginBottom: '14px' }}>
+              <span style={{ fontSize: '11px', color: '#86efac', fontWeight: 600, display: 'block', marginBottom: '3px' }}>
+                Verification Result:
               </span>
               <div style={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: '8px',
-                padding: '8px 12px',
-                background: verification.verified ? 'rgba(16, 185, 129, 0.15)' : 'rgba(244, 63, 94, 0.15)',
-                border: `1px solid ${verification.verified ? '#10b981' : '#f43f5e'}`,
-                borderRadius: '8px',
-                fontSize: '13px',
+                padding: '6px 10px',
+                background: verification.verified ? 'rgba(16, 185, 129, 0.12)' : 'rgba(225, 29, 72, 0.12)',
+                border: `1px solid ${verification.verified ? '#10b981' : '#e11d48'}`,
+                borderRadius: '4px',
+                fontSize: '12px',
                 color: verification.verified ? '#86efac' : '#fca5a5'
               }}>
-                <CheckCircle2 size={16} />
+                <CheckCircle2 size={14} />
                 <span>
-                  {verification.test_output || 'All unit tests in test_calculator.py passed successfully!'}
+                  {verification.test_output || 'All unit tests in test_calculator.py passed successfully.'}
                 </span>
               </div>
             </div>
           )}
 
-          {/* Quick Metrics Bar */}
+          {/* Metrics */}
           {finalReport.metrics && (
             <div style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
-              gap: '10px',
-              paddingTop: '12px',
-              borderTop: '1px solid rgba(16, 185, 129, 0.25)'
+              gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
+              gap: '8px',
+              paddingTop: '10px',
+              borderTop: '1px solid rgba(16, 185, 129, 0.2)'
             }}>
               <div>
-                <span style={{ fontSize: '11px', color: '#94a3b8' }}>Latency</span>
-                <p style={{ fontSize: '14px', fontWeight: 700, color: '#f8fafc' }}>
+                <span style={{ fontSize: '10px', color: '#94a3b8' }}>Latency</span>
+                <p style={{ fontSize: '13px', fontWeight: 600, color: '#f8fafc' }}>
                   {finalReport.metrics.total_latency_ms} ms
                 </p>
               </div>
               <div>
-                <span style={{ fontSize: '11px', color: '#94a3b8' }}>Tokens</span>
-                <p style={{ fontSize: '14px', fontWeight: 700, color: '#f8fafc' }}>
+                <span style={{ fontSize: '10px', color: '#94a3b8' }}>Tokens</span>
+                <p style={{ fontSize: '13px', fontWeight: 600, color: '#f8fafc' }}>
                   {finalReport.metrics.tokens?.total || 0}
                 </p>
               </div>
               <div>
-                <span style={{ fontSize: '11px', color: '#94a3b8' }}>Est. Cost</span>
-                <p style={{ fontSize: '14px', fontWeight: 700, color: '#f8fafc' }}>
+                <span style={{ fontSize: '10px', color: '#94a3b8' }}>Cost</span>
+                <p style={{ fontSize: '13px', fontWeight: 600, color: '#f8fafc' }}>
                   ${finalReport.metrics.cost_usd || 0.00015}
                 </p>
               </div>
               <div>
-                <span style={{ fontSize: '11px', color: '#94a3b8' }}>Tool Accuracy</span>
-                <p style={{ fontSize: '14px', fontWeight: 700, color: '#34d399' }}>
+                <span style={{ fontSize: '10px', color: '#94a3b8' }}>Tool Accuracy</span>
+                <p style={{ fontSize: '13px', fontWeight: 600, color: '#34d399' }}>
                   {((finalReport.metrics.tool_accuracy || 1) * 100).toFixed(0)}%
                 </p>
               </div>

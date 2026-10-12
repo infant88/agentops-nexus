@@ -182,7 +182,7 @@ def generate_markdown_report(run_id: str, summary: Dict[str, Any], case_results:
     os.makedirs(os.path.dirname(report_path), exist_ok=True)
 
     with open(report_path, "w", encoding="utf-8") as f:
-        f.write(f"""# AgentOps Nexus — Benchmark Evaluation Report
+        f.write(f"""# AgentOps Nexus: Benchmark Evaluation Report
 
 **Run ID**: `{run_id}`  
 **Evaluation Standard**: 40-case comprehensive test suite  

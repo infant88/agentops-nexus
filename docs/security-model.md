@@ -1,4 +1,4 @@
-# AgentOps Nexus — Security & Safeguard Model
+# AgentOps Nexus: Security & Safeguard Model
 
 MCP standardizes tool communication between LLMs and tools, but **MCP alone does not provide authorization, sandboxing, or safe execution**. AgentOps Nexus implements a zero-trust, server-enforced security architecture.
 

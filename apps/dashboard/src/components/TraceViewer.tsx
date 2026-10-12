@@ -109,9 +109,9 @@ export const TraceViewer: React.FC<TraceViewerProps> = ({ taskId }) => {
           gap: '10px',
           padding: '12px 16px',
           background: 'rgba(15, 23, 42, 0.5)',
-          borderRadius: '10px',
+          borderRadius: '4px',
           marginBottom: '20px',
-          border: '1px solid rgba(56, 96, 160, 0.2)'
+          border: '1px solid #1e293b'
         }}>
           <div>
             <span style={{ fontSize: '11px', color: '#94a3b8' }}>Total Latency</span>
@@ -161,9 +161,9 @@ export const TraceViewer: React.FC<TraceViewerProps> = ({ taskId }) => {
                   key={span.id || idx}
                   style={{
                     padding: '10px 14px',
-                    borderRadius: '8px',
+                    borderRadius: '4px',
                     background: 'rgba(11, 19, 36, 0.6)',
-                    border: '1px solid rgba(56, 96, 160, 0.2)'
+                    border: '1px solid #1e293b'
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
@@ -184,12 +184,12 @@ export const TraceViewer: React.FC<TraceViewerProps> = ({ taskId }) => {
                   </div>
 
                   {/* Relative Timeline Bar */}
-                  <div style={{ width: '100%', height: '5px', background: 'rgba(15, 23, 42, 0.8)', borderRadius: '3px', overflow: 'hidden' }}>
+                  <div style={{ width: '100%', height: '5px', background: 'rgba(15, 23, 42, 0.8)', borderRadius: '2px', overflow: 'hidden' }}>
                     <div style={{
                       width: `${barPercent}%`,
                       height: '100%',
-                      background: 'linear-gradient(90deg, #6366f1, #06b6d4)',
-                      borderRadius: '3px'
+                      background: 'linear-gradient(90deg, #0284c7, #38bdf8)',
+                      borderRadius: '2px'
                     }}></div>
                   </div>
                 </div>
@@ -255,12 +255,12 @@ export const TraceViewer: React.FC<TraceViewerProps> = ({ taskId }) => {
           <pre style={{
             background: '#040812',
             padding: '16px',
-            borderRadius: '10px',
+            borderRadius: '4px',
             fontSize: '12px',
             color: '#34d399',
             overflowX: 'auto',
             maxHeight: '400px',
-            border: '1px solid rgba(56, 96, 160, 0.3)'
+            border: '1px solid #1e293b'
           }}>
             {JSON.stringify(traceData, null, 2)}
           </pre>

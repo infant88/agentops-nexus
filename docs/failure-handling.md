@@ -1,4 +1,4 @@
-# AgentOps Nexus — Failure Handling & Recovery Policy
+# AgentOps Nexus: Failure Handling & Recovery Policy
 
 A resilient AI agent system must distinguish between **transient network glitches** (which should be retried with exponential backoff) and **deterministic errors** (such as syntax errors, validation failures, or security breaches, which must fail fast to prevent resource exhaustion and infinite loops).
 

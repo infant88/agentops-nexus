@@ -1,7 +1,7 @@
-# AgentOps Nexus — An Evaluated AI Agent Platform
+# AgentOps Nexus: An Evaluated AI Agent Platform
 
 [![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://python.org)
-[![LangGraph](https://img.shields.io/badge/LangGraph-1.2-purple.svg)](https://github.com/langchain-ai/langgraph)
+[![LangGraph](https://img.shields.io/badge/LangGraph-1.2-blue.svg)](https://github.com/langchain-ai/langgraph)
 [![MCP](https://img.shields.io/badge/MCP-2.3-cyan.svg)](https://modelcontextprotocol.io)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688.svg)](https://fastapi.tiangolo.com)
 [![React](https://img.shields.io/badge/React-19-61dafb.svg)](https://react.dev)
@@ -75,13 +75,13 @@ flowchart TD
 
 ## 2. Key Modules & Engineering Features
 
-### Module A — Stateful LangGraph AI Workflow
+### Module A: Stateful LangGraph AI Workflow
 - **State Machine**: Decomposes objectives into typed plans with tool targeting, retry counters, and history logs.
 - **Persistent Checkpointing & Interrupts**: Pauses execution using `interrupt()` before destructive write operations without holding active threads. State is persisted to disk checkpointers.
 - **Bounded Exponential Backoff**: Transient errors (timeouts, rate limits, lock contention) recover within a 3-retry budget. Deterministic errors (syntax errors, validation errors) fail fast.
 - **Result Verification Gate**: Executes the allowlisted test runner (`python -m unittest test_calculator.py`) to verify that the proposed patch actually fixes failing tests before completing.
 
-### Module B — MCP Server & Security Sandbox
+### Module B: MCP Server & Security Sandbox
 - **Standardized Tool Registry**: Exposes 6 typed tools via the Model Context Protocol:
   - `search_repository`: Safe file/regex searching in sandbox repo.
   - `get_project_status`: Project ticket and test run status.
@@ -95,7 +95,7 @@ flowchart TD
   - Recursive regex redacts credentials (`sk-...`, `Bearer ...`) from all audit logs.
   - Idempotency store prevents duplicate replay mutations.
 
-### Module C — Benchmark Evaluation & Observability
+### Module C: Benchmark Evaluation & Observability
 - **40-Case Evaluation Suite**: Covers normal tasks, ambiguous requests, invalid inputs, transient failures, permission denials, and approval gates.
 - **Telemetry & Spans**: OpenTelemetry & LangSmith compatible traces with node execution timing, token counts, and cost estimation.
 - **Persistent Records**: All tasks, spans, audit logs, and benchmark runs are persisted in SQLite/PostgreSQL.
@@ -229,7 +229,7 @@ docker compose up --build
 
 ## 6. Resume Positioning
 
-**AgentOps Nexus — Stateful AI Agent Orchestration and Evaluation Platform**
+**AgentOps Nexus: Stateful AI Agent Orchestration and Evaluation Platform**
 - Engineered a LangGraph-based agent workflow with persistent state, conditional tool routing, bounded exponential retries, failure recovery, and checkpointed human approval via `interrupt()`.
 - Developed an MCP server exposing validated, permission-controlled project and database tools with path jail boundaries, read-only SQL enforcement, secret redaction, and idempotency controls.
 - Built a reproducible 40-case agent evaluation framework measuring task success rate (100%), tool-selection accuracy (95%), latency (442 ms), token consumption, and retry recovery, with OpenTelemetry and LangSmith tracing.

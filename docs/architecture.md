@@ -1,4 +1,4 @@
-# AgentOps Nexus — Architecture Documentation
+# AgentOps Nexus: Architecture Documentation
 
 AgentOps Nexus is a production-grade AI agent platform unifying stateful LangGraph orchestration, Model Context Protocol (MCP) tool interfaces, human-in-the-loop checkpoint gates, and automated benchmark evaluation.
 

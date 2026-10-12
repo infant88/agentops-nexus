@@ -5,9 +5,9 @@ import {
   BarChart3, 
   Activity, 
   Cpu, 
-  CheckCircle2,
+  Layers,
   Lock,
-  Layers
+  FileText
 } from 'lucide-react';
 
 interface NavbarProps {
@@ -19,9 +19,8 @@ interface NavbarProps {
 export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, pendingApprovalsCount }) => {
   return (
     <header style={{
-      borderBottom: '1px solid rgba(56, 96, 160, 0.25)',
-      background: 'rgba(7, 13, 24, 0.85)',
-      backdropFilter: 'blur(20px)',
+      borderBottom: '1px solid #1e293b',
+      background: '#090d16',
       position: 'sticky',
       top: 0,
       zIndex: 50,
@@ -30,46 +29,46 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, pending
       alignItems: 'center',
       justifyContent: 'space-between'
     }}>
-      {/* Brand & Title */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+      {/* Brand & Technical Subtitle */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
         <div style={{
-          width: '38px',
-          height: '38px',
-          borderRadius: '10px',
-          background: 'linear-gradient(135deg, #6366f1, #06b6d4)',
+          width: '34px',
+          height: '34px',
+          borderRadius: '4px',
+          background: '#0f172a',
+          border: '1px solid #334155',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'center',
-          boxShadow: '0 0 18px rgba(99, 102, 241, 0.45)'
+          justifyContent: 'center'
         }}>
-          <Cpu size={22} color="#ffffff" />
+          <Cpu size={18} color="#38bdf8" />
         </div>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontWeight: 800, fontSize: '18px', letterSpacing: '-0.02em', color: '#f8fafc' }}>
-              AgentOps <span style={{ color: '#38bdf8' }}>Nexus</span>
+            <span style={{ fontWeight: 700, fontSize: '16px', letterSpacing: '-0.01em', color: '#f8fafc' }}>
+              AgentOps Nexus
             </span>
-            <span className="badge badge-info" style={{ fontSize: '10px' }}>v1.0 Production</span>
+            <span className="badge badge-info" style={{ fontSize: '10px' }}>v1.0</span>
           </div>
-          <p style={{ fontSize: '12px', color: '#94a3b8' }}>
-            Evaluated AI Agent Platform · LangGraph · MCP · Guardrails
+          <p style={{ fontSize: '11px', color: '#64748b' }}>
+            LangGraph Orchestration, MCP Tools, Checkpointed Approvals, Observability
           </p>
         </div>
       </div>
 
-      {/* Navigation Tabs */}
-      <nav style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+      {/* Navigation Tabs (Rectangular buttons, no pill shapes, no purple) */}
+      <nav style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
         <button
           onClick={() => setActiveTab('orchestrator')}
           className={`btn-secondary ${activeTab === 'orchestrator' ? 'nexus-card-active' : ''}`}
           style={{
-            fontSize: '13px',
-            padding: '7px 14px',
-            background: activeTab === 'orchestrator' ? 'rgba(99, 102, 241, 0.2)' : 'transparent',
-            borderColor: activeTab === 'orchestrator' ? '#6366f1' : 'transparent'
+            fontSize: '12px',
+            padding: '6px 12px',
+            background: activeTab === 'orchestrator' ? '#17223b' : 'transparent',
+            borderColor: activeTab === 'orchestrator' ? '#0284c7' : 'transparent'
           }}
         >
-          <Terminal size={15} color={activeTab === 'orchestrator' ? '#818cf8' : '#94a3b8'} />
+          <Terminal size={14} color={activeTab === 'orchestrator' ? '#38bdf8' : '#94a3b8'} />
           <span>Orchestrator</span>
         </button>
 
@@ -77,22 +76,22 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, pending
           onClick={() => setActiveTab('approvals')}
           className={`btn-secondary ${activeTab === 'approvals' ? 'nexus-card-active' : ''}`}
           style={{
-            fontSize: '13px',
-            padding: '7px 14px',
-            background: activeTab === 'approvals' ? 'rgba(245, 158, 11, 0.2)' : 'transparent',
-            borderColor: activeTab === 'approvals' ? '#f59e0b' : 'transparent',
+            fontSize: '12px',
+            padding: '6px 12px',
+            background: activeTab === 'approvals' ? '#17223b' : 'transparent',
+            borderColor: activeTab === 'approvals' ? '#d97706' : 'transparent',
             position: 'relative'
           }}
         >
-          <ShieldCheck size={15} color={activeTab === 'approvals' ? '#fbbf24' : '#94a3b8'} />
+          <ShieldCheck size={14} color={activeTab === 'approvals' ? '#fbbf24' : '#94a3b8'} />
           <span>Approval Gate</span>
           {pendingApprovalsCount > 0 && (
             <span style={{
-              background: '#f43f5e',
+              background: '#e11d48',
               color: '#fff',
               fontSize: '10px',
-              padding: '1px 6px',
-              borderRadius: '999px',
+              padding: '1px 5px',
+              borderRadius: '2px',
               fontWeight: 700,
               marginLeft: '4px'
             }}>
@@ -105,13 +104,13 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, pending
           onClick={() => setActiveTab('evaluation')}
           className={`btn-secondary ${activeTab === 'evaluation' ? 'nexus-card-active' : ''}`}
           style={{
-            fontSize: '13px',
-            padding: '7px 14px',
-            background: activeTab === 'evaluation' ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
+            fontSize: '12px',
+            padding: '6px 12px',
+            background: activeTab === 'evaluation' ? '#17223b' : 'transparent',
             borderColor: activeTab === 'evaluation' ? '#10b981' : 'transparent'
           }}
         >
-          <BarChart3 size={15} color={activeTab === 'evaluation' ? '#34d399' : '#94a3b8'} />
+          <BarChart3 size={14} color={activeTab === 'evaluation' ? '#34d399' : '#94a3b8'} />
           <span>Evaluation (40 Cases)</span>
         </button>
 
@@ -119,13 +118,13 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, pending
           onClick={() => setActiveTab('observability')}
           className={`btn-secondary ${activeTab === 'observability' ? 'nexus-card-active' : ''}`}
           style={{
-            fontSize: '13px',
-            padding: '7px 14px',
-            background: activeTab === 'observability' ? 'rgba(6, 182, 212, 0.2)' : 'transparent',
-            borderColor: activeTab === 'observability' ? '#06b6d4' : 'transparent'
+            fontSize: '12px',
+            padding: '6px 12px',
+            background: activeTab === 'observability' ? '#17223b' : 'transparent',
+            borderColor: activeTab === 'observability' ? '#0ea5e9' : 'transparent'
           }}
         >
-          <Activity size={15} color={activeTab === 'observability' ? '#38bdf8' : '#94a3b8'} />
+          <Activity size={14} color={activeTab === 'observability' ? '#38bdf8' : '#94a3b8'} />
           <span>Traces & Audits</span>
         </button>
 
@@ -133,27 +132,54 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, pending
           onClick={() => setActiveTab('mcp')}
           className={`btn-secondary ${activeTab === 'mcp' ? 'nexus-card-active' : ''}`}
           style={{
-            fontSize: '13px',
-            padding: '7px 14px',
-            background: activeTab === 'mcp' ? 'rgba(139, 92, 246, 0.2)' : 'transparent',
-            borderColor: activeTab === 'mcp' ? '#8b5cf6' : 'transparent'
+            fontSize: '12px',
+            padding: '6px 12px',
+            background: activeTab === 'mcp' ? '#17223b' : 'transparent',
+            borderColor: activeTab === 'mcp' ? '#334155' : 'transparent'
           }}
         >
-          <Layers size={15} color={activeTab === 'mcp' ? '#c084fc' : '#94a3b8'} />
-          <span>MCP & Sandbox</span>
+          <Layers size={14} color={activeTab === 'mcp' ? '#cbd5e1' : '#94a3b8'} />
+          <span>MCP Tools</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('privacy')}
+          className={`btn-secondary ${activeTab === 'privacy' ? 'nexus-card-active' : ''}`}
+          style={{
+            fontSize: '12px',
+            padding: '6px 12px',
+            background: activeTab === 'privacy' ? '#17223b' : 'transparent',
+            borderColor: activeTab === 'privacy' ? '#334155' : 'transparent'
+          }}
+        >
+          <FileText size={14} color={activeTab === 'privacy' ? '#cbd5e1' : '#94a3b8'} />
+          <span>Privacy</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('terms')}
+          className={`btn-secondary ${activeTab === 'terms' ? 'nexus-card-active' : ''}`}
+          style={{
+            fontSize: '12px',
+            padding: '6px 12px',
+            background: activeTab === 'terms' ? '#17223b' : 'transparent',
+            borderColor: activeTab === 'terms' ? '#334155' : 'transparent'
+          }}
+        >
+          <span>Terms</span>
         </button>
       </nav>
 
       {/* Status Badges */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#10b981' }}>
-          <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981', display: 'inline-block', boxShadow: '0 0 8px #10b981' }}></span>
+          <span style={{ width: '7px', height: '7px', borderRadius: '2px', background: '#10b981', display: 'inline-block' }}></span>
           <span style={{ fontWeight: 600 }}>LangGraph Active</span>
         </div>
-        <div style={{ width: '1px', height: '18px', background: 'rgba(56, 96, 160, 0.3)' }}></div>
+        <div style={{ width: '1px', height: '16px', background: '#1e293b' }}></div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '12px', color: '#94a3b8' }}>
-          <Lock size={12} color="#06b6d4" />
-          <span>MCP Sandbox Jail</span>
+          <Lock size={12} color="#0ea5e9" />
+          <span>Sandbox Boundary</span>
         </div>
       </div>
     </header>

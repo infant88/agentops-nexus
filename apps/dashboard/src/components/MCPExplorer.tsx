@@ -121,10 +121,10 @@ export const MCPExplorer: React.FC = () => {
         <div className="nexus-card" style={{ padding: '22px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
             <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#f8fafc', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Layers size={18} color="#8b5cf6" />
+              <Layers size={18} color="#0ea5e9" />
               <span>Standardized MCP Tool Registry ({tools.length} Tools)</span>
             </h3>
-            <span className="badge badge-purple" style={{ fontSize: '11px' }}>
+            <span className="badge badge-info" style={{ fontSize: '11px' }}>
               MCP SDK 2.3.0
             </span>
           </div>
@@ -138,15 +138,15 @@ export const MCPExplorer: React.FC = () => {
                   onClick={() => handleSelectTool(t)}
                   style={{
                     padding: '12px',
-                    borderRadius: '10px',
-                    background: isSelected ? 'rgba(139, 92, 246, 0.25)' : 'rgba(15, 23, 42, 0.45)',
-                    border: `1px solid ${isSelected ? '#8b5cf6' : 'rgba(56, 96, 160, 0.2)'}`,
+                    borderRadius: '4px',
+                    background: isSelected ? 'rgba(14, 165, 233, 0.15)' : 'rgba(15, 23, 42, 0.45)',
+                    border: `1px solid ${isSelected ? '#0ea5e9' : '#1e293b'}`,
                     cursor: 'pointer',
-                    transition: 'all 0.2s ease'
+                    transition: 'all 0.15s ease'
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
-                    <span style={{ fontSize: '13px', fontWeight: 600, color: isSelected ? '#c084fc' : '#f8fafc' }}>
+                    <span style={{ fontSize: '13px', fontWeight: 600, color: isSelected ? '#38bdf8' : '#f8fafc' }}>
                       {t.name}
                     </span>
                     {t.isSensitive ? (
@@ -164,7 +164,7 @@ export const MCPExplorer: React.FC = () => {
           </div>
 
           {/* Playground input */}
-          <div style={{ borderTop: '1px solid rgba(56, 96, 160, 0.25)', paddingTop: '16px' }}>
+          <div style={{ borderTop: '1px solid #1e293b', paddingTop: '16px' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
               <span style={{ fontSize: '12px', fontWeight: 600, color: '#cbd5e1' }}>
                 Tool Arguments (JSON):
@@ -181,9 +181,9 @@ export const MCPExplorer: React.FC = () => {
               style={{
                 width: '100%',
                 padding: '10px 12px',
-                borderRadius: '8px',
+                borderRadius: '4px',
                 background: '#040812',
-                border: '1px solid rgba(56, 96, 160, 0.3)',
+                border: '1px solid #1e293b',
                 color: '#34d399',
                 fontSize: '12px',
                 fontFamily: 'monospace',
@@ -196,7 +196,6 @@ export const MCPExplorer: React.FC = () => {
               onClick={handleExecute}
               disabled={loading}
               className="btn-primary"
-              style={{ background: 'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)' }}
             >
               <Play size={14} fill="white" />
               <span>{loading ? 'Executing...' : 'Invoke MCP Tool'}</span>
@@ -212,7 +211,7 @@ export const MCPExplorer: React.FC = () => {
               <pre style={{
                 background: '#040812',
                 padding: '12px',
-                borderRadius: '8px',
+                borderRadius: '4px',
                 fontSize: '11px',
                 color: testResult.success ? '#34d399' : '#fca5a5',
                 overflowX: 'auto',
@@ -286,12 +285,12 @@ export const MCPExplorer: React.FC = () => {
               <pre style={{
                 background: '#040812',
                 padding: '14px',
-                borderRadius: '8px',
+                borderRadius: '4px',
                 fontSize: '12px',
                 color: '#cbd5e1',
                 overflowX: 'auto',
                 maxHeight: '420px',
-                border: '1px solid rgba(56, 96, 160, 0.3)',
+                border: '1px solid #1e293b',
                 lineHeight: 1.45
               }}>
                 {selectedFile.content}

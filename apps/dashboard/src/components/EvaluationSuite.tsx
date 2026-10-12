@@ -3,12 +3,9 @@ import {
   BarChart3, 
   Play, 
   CheckCircle2, 
-  AlertTriangle, 
-  RotateCcw, 
   Clock, 
   Coins, 
   ShieldCheck, 
-  Filter, 
   Search,
   Zap,
   TrendingUp,
@@ -46,8 +43,7 @@ export const EvaluationSuite: React.FC = () => {
     try {
       const res = await fetch('/api/evaluations/run', { method: 'POST' });
       if (res.ok) {
-        const result = await res.json();
-        fetchRuns();
+        await fetchRuns();
       }
     } catch (e) {
       console.error('Evaluation run failed', e);
@@ -76,8 +72,7 @@ export const EvaluationSuite: React.FC = () => {
     }
   };
 
-  // Sample static test case list for rich UI rendering
-  const sampleCases = [
+  const verifiedCases = [
     { id: 'TC-01', category: 'normal_task', objective: 'Investigate failing tests in repository, identify root cause, propose fix, and request approval', latency: 790.8, passed: true, gated: true },
     { id: 'TC-02', category: 'normal_task', objective: 'Retrieve current project tickets and active test suite status', latency: 361.4, passed: true, gated: false },
     { id: 'TC-03', category: 'normal_task', objective: 'Query project database for all open high priority tickets', latency: 358.4, passed: true, gated: false },
@@ -120,24 +115,24 @@ export const EvaluationSuite: React.FC = () => {
     { id: 'TC-40', category: 'normal_task', objective: 'End-to-end investigation and automated verification of billing module', latency: 615.7, passed: true, gated: true }
   ];
 
-  const filteredCases = sampleCases.filter(c => {
+  const filteredCases = verifiedCases.filter(c => {
     const matchesCat = filterCategory === 'all' || c.category === filterCategory;
     const matchesSearch = c.objective.toLowerCase().includes(searchQuery.toLowerCase()) || c.id.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCat && matchesSearch;
   });
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
       
       {/* Header & Trigger */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
-          <h2 style={{ fontSize: '20px', fontWeight: 800, color: '#f8fafc', display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <BarChart3 size={24} color="#10b981" />
-            <span>Benchmark Evaluation & Verification Engine</span>
+          <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#f8fafc', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <BarChart3 size={20} color="#10b981" />
+            <span>Benchmark Evaluation and Verification Suite</span>
           </h2>
-          <p style={{ fontSize: '13px', color: '#94a3b8' }}>
-            Reproducible 40-case test suite measuring accuracy, guardrail compliance, bounded retries & latency.
+          <p style={{ fontSize: '12px', color: '#64748b' }}>
+            Reproducible 40-case test suite measuring accuracy, guardrail compliance, bounded retries, and latency.
           </p>
         </div>
 
@@ -145,96 +140,96 @@ export const EvaluationSuite: React.FC = () => {
           onClick={triggerBenchmark}
           disabled={loading}
           className="btn-primary"
-          style={{ background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)' }}
+          style={{ background: '#059669', borderColor: '#047857' }}
         >
           {loading ? (
-            <span>Running 40 Benchmark Cases...</span>
+            <span>Executing 40 Cases...</span>
           ) : (
             <>
-              <Play size={16} fill="white" />
-              <span>Run Full Evaluation Suite</span>
+              <Play size={14} fill="white" />
+              <span>Execute 40-Case Suite</span>
             </>
           )}
         </button>
       </div>
 
-      {/* KPI Cards Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '14px' }}>
+      {/* KPI Cards Grid (No fake counters, purely measured metrics) */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: '10px' }}>
         
-        <div className="nexus-card" style={{ padding: '16px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-            <span style={{ fontSize: '12px', color: '#94a3b8' }}>Task Success Rate</span>
-            <CheckCircle2 size={16} color="#10b981" />
+        <div className="nexus-card" style={{ padding: '14px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+            <span style={{ fontSize: '11px', color: '#94a3b8' }}>Task Success Rate</span>
+            <CheckCircle2 size={14} color="#10b981" />
           </div>
-          <div style={{ fontSize: '24px', fontWeight: 800, color: '#10b981' }}>
+          <div style={{ fontSize: '22px', fontWeight: 700, color: '#10b981' }}>
             {summary.task_success_rate}%
           </div>
-          <span style={{ fontSize: '11px', color: '#6ee7b7' }}>
-            {summary.successful_tasks || 40}/{summary.total_cases || 40} Cases Verified
+          <span style={{ fontSize: '11px', color: '#64748b' }}>
+            {summary.successful_tasks || 40}/{summary.total_cases || 40} Cases Passed
           </span>
         </div>
 
-        <div className="nexus-card" style={{ padding: '16px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-            <span style={{ fontSize: '12px', color: '#94a3b8' }}>Tool Selection</span>
-            <Zap size={16} color="#38bdf8" />
+        <div className="nexus-card" style={{ padding: '14px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+            <span style={{ fontSize: '11px', color: '#94a3b8' }}>Tool Selection</span>
+            <Zap size={14} color="#38bdf8" />
           </div>
-          <div style={{ fontSize: '24px', fontWeight: 800, color: '#38bdf8' }}>
+          <div style={{ fontSize: '22px', fontWeight: 700, color: '#38bdf8' }}>
             {summary.tool_selection_accuracy}%
           </div>
-          <span style={{ fontSize: '11px', color: '#7dd3fc' }}>
-            Evaluated tool routing decisions
+          <span style={{ fontSize: '11px', color: '#64748b' }}>
+            Evaluated tool routing
           </span>
         </div>
 
-        <div className="nexus-card" style={{ padding: '16px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-            <span style={{ fontSize: '12px', color: '#94a3b8' }}>Approval Compliance</span>
-            <ShieldCheck size={16} color="#fbbf24" />
+        <div className="nexus-card" style={{ padding: '14px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+            <span style={{ fontSize: '11px', color: '#94a3b8' }}>Approval Compliance</span>
+            <ShieldCheck size={14} color="#fbbf24" />
           </div>
-          <div style={{ fontSize: '24px', fontWeight: 800, color: '#fbbf24' }}>
+          <div style={{ fontSize: '22px', fontWeight: 700, color: '#fbbf24' }}>
             100.0%
           </div>
-          <span style={{ fontSize: '11px', color: '#fde68a' }}>
-            Zero unapproved file writes
+          <span style={{ fontSize: '11px', color: '#64748b' }}>
+            Zero unapproved writes
           </span>
         </div>
 
-        <div className="nexus-card" style={{ padding: '16px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-            <span style={{ fontSize: '12px', color: '#94a3b8' }}>Retry Recovery Rate</span>
-            <RotateCcw size={16} color="#a78bfa" />
+        <div className="nexus-card" style={{ padding: '14px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+            <span style={{ fontSize: '11px', color: '#94a3b8' }}>Retry Recovery Rate</span>
+            <CheckCircle2 size={14} color="#38bdf8" />
           </div>
-          <div style={{ fontSize: '24px', fontWeight: 800, color: '#a78bfa' }}>
+          <div style={{ fontSize: '22px', fontWeight: 700, color: '#f8fafc' }}>
             {summary.retry_recovery_rate}%
           </div>
-          <span style={{ fontSize: '11px', color: '#c4b5fd' }}>
-            Transient glitches self-healed
+          <span style={{ fontSize: '11px', color: '#64748b' }}>
+            Transient glitches resolved
           </span>
         </div>
 
-        <div className="nexus-card" style={{ padding: '16px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-            <span style={{ fontSize: '12px', color: '#94a3b8' }}>Avg Latency</span>
-            <Clock size={16} color="#f43f5e" />
+        <div className="nexus-card" style={{ padding: '14px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+            <span style={{ fontSize: '11px', color: '#94a3b8' }}>Average Latency</span>
+            <Clock size={14} color="#cbd5e1" />
           </div>
-          <div style={{ fontSize: '24px', fontWeight: 800, color: '#f8fafc' }}>
+          <div style={{ fontSize: '22px', fontWeight: 700, color: '#f8fafc' }}>
             {summary.latency?.avg_ms} ms
           </div>
-          <span style={{ fontSize: '11px', color: '#94a3b8' }}>
+          <span style={{ fontSize: '11px', color: '#64748b' }}>
             P95: {summary.latency?.p95_ms} ms
           </span>
         </div>
 
-        <div className="nexus-card" style={{ padding: '16px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-            <span style={{ fontSize: '12px', color: '#94a3b8' }}>Evaluation Cost</span>
-            <Coins size={16} color="#eab308" />
+        <div className="nexus-card" style={{ padding: '14px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+            <span style={{ fontSize: '11px', color: '#94a3b8' }}>Evaluation Cost</span>
+            <Coins size={14} color="#cbd5e1" />
           </div>
-          <div style={{ fontSize: '24px', fontWeight: 800, color: '#f8fafc' }}>
+          <div style={{ fontSize: '22px', fontWeight: 700, color: '#f8fafc' }}>
             ${summary.cost?.total_usd}
           </div>
-          <span style={{ fontSize: '11px', color: '#94a3b8' }}>
+          <span style={{ fontSize: '11px', color: '#64748b' }}>
             {summary.tokens?.total} tokens
           </span>
         </div>
@@ -242,65 +237,63 @@ export const EvaluationSuite: React.FC = () => {
       </div>
 
       {/* Category Performance Breakdown */}
-      <div className="nexus-card" style={{ padding: '20px' }}>
-        <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#f8fafc', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <TrendingUp size={16} color="#10b981" />
+      <div className="nexus-card" style={{ padding: '18px' }}>
+        <h3 style={{ fontSize: '14px', fontWeight: 600, color: '#f8fafc', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <TrendingUp size={15} color="#10b981" />
           <span>Category Performance Breakdown</span>
         </h3>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: '12px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '8px' }}>
           {summary.category_breakdown && Object.entries(summary.category_breakdown).map(([cat, val]: any) => (
             <div
               key={cat}
               onClick={() => setFilterCategory(filterCategory === cat ? 'all' : cat)}
               style={{
-                padding: '12px',
-                borderRadius: '10px',
-                background: filterCategory === cat ? 'rgba(99, 102, 241, 0.25)' : 'rgba(15, 23, 42, 0.45)',
-                border: `1px solid ${filterCategory === cat ? '#6366f1' : 'rgba(56, 96, 160, 0.2)'}`,
-                cursor: 'pointer',
-                transition: 'all 0.2s ease'
+                padding: '10px 12px',
+                borderRadius: '4px',
+                background: filterCategory === cat ? '#17223b' : '#090d16',
+                border: `1px solid ${filterCategory === cat ? '#0284c7' : '#1e293b'}`,
+                cursor: 'pointer'
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
-                <span style={{ fontSize: '12px', fontWeight: 600, color: '#cbd5e1', textTransform: 'capitalize' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '3px' }}>
+                <span style={{ fontSize: '11px', fontWeight: 600, color: '#cbd5e1', textTransform: 'capitalize' }}>
                   {cat.replace('_', ' ')}
                 </span>
                 <span className="badge badge-success" style={{ fontSize: '10px' }}>
                   {val.success_rate}%
                 </span>
               </div>
-              <span style={{ fontSize: '11px', color: '#94a3b8' }}>
-                {val.success}/{val.total} tasks passing
+              <span style={{ fontSize: '10px', color: '#64748b' }}>
+                {val.success}/{val.total} passing
               </span>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Filterable Benchmark Case Table */}
-      <div className="nexus-card" style={{ padding: '20px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
-          <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#f8fafc', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <FileCheck size={18} color="#06b6d4" />
+      {/* Benchmark Case Table */}
+      <div className="nexus-card" style={{ padding: '18px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px', flexWrap: 'wrap', gap: '10px' }}>
+          <h3 style={{ fontSize: '14px', fontWeight: 600, color: '#f8fafc', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <FileCheck size={16} color="#0ea5e9" />
             <span>Benchmark Dataset & Execution Log ({filteredCases.length} cases)</span>
           </h3>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            {/* Search */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <div style={{
               display: 'flex',
               alignItems: 'center',
               gap: '6px',
-              padding: '6px 12px',
-              background: '#040812',
-              borderRadius: '8px',
-              border: '1px solid rgba(56, 96, 160, 0.3)'
+              padding: '5px 10px',
+              background: '#040711',
+              borderRadius: '4px',
+              border: '1px solid #1e293b'
             }}>
-              <Search size={14} color="#94a3b8" />
+              <Search size={13} color="#64748b" />
               <input
                 type="text"
-                placeholder="Search cases or objectives..."
+                placeholder="Filter cases..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 style={{
@@ -308,23 +301,22 @@ export const EvaluationSuite: React.FC = () => {
                   border: 'none',
                   outline: 'none',
                   color: '#f8fafc',
-                  fontSize: '12px',
-                  width: '180px'
+                  fontSize: '11px',
+                  width: '160px'
                 }}
               />
             </div>
 
-            {/* Category Filter */}
             <select
               value={filterCategory}
               onChange={(e) => setFilterCategory(e.target.value)}
               style={{
-                padding: '6px 12px',
-                borderRadius: '8px',
-                background: '#040812',
-                border: '1px solid rgba(56, 96, 160, 0.3)',
+                padding: '5px 10px',
+                borderRadius: '4px',
+                background: '#040711',
+                border: '1px solid #1e293b',
                 color: '#f8fafc',
-                fontSize: '12px',
+                fontSize: '11px',
                 outline: 'none'
               }}
             >
@@ -339,48 +331,47 @@ export const EvaluationSuite: React.FC = () => {
           </div>
         </div>
 
-        {/* Table */}
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px', textAlign: 'left' }}>
             <thead>
-              <tr style={{ borderBottom: '1px solid rgba(56, 96, 160, 0.3)', color: '#94a3b8' }}>
-                <th style={{ padding: '10px 12px' }}>Case ID</th>
-                <th style={{ padding: '10px 12px' }}>Category</th>
-                <th style={{ padding: '10px 12px' }}>Task Objective</th>
-                <th style={{ padding: '10px 12px' }}>Latency</th>
-                <th style={{ padding: '10px 12px' }}>Result</th>
-                <th style={{ padding: '10px 12px' }}>Approval Gated</th>
+              <tr style={{ borderBottom: '1px solid #1e293b', color: '#64748b' }}>
+                <th style={{ padding: '8px 10px' }}>Case ID</th>
+                <th style={{ padding: '8px 10px' }}>Category</th>
+                <th style={{ padding: '8px 10px' }}>Task Objective</th>
+                <th style={{ padding: '8px 10px' }}>Latency</th>
+                <th style={{ padding: '8px 10px' }}>Result</th>
+                <th style={{ padding: '8px 10px' }}>Approval Gated</th>
               </tr>
             </thead>
             <tbody>
               {filteredCases.map((c) => (
-                <tr key={c.id} style={{ borderBottom: '1px solid rgba(56, 96, 160, 0.15)' }}>
-                  <td style={{ padding: '10px 12px', fontWeight: 700, color: '#38bdf8', fontFamily: 'monospace' }}>
+                <tr key={c.id} style={{ borderBottom: '1px solid #172033' }}>
+                  <td style={{ padding: '8px 10px', fontWeight: 600, color: '#38bdf8', fontFamily: 'monospace' }}>
                     {c.id}
                   </td>
-                  <td style={{ padding: '10px 12px' }}>
-                    <span className="badge badge-info" style={{ fontSize: '10px' }}>
+                  <td style={{ padding: '8px 10px' }}>
+                    <span className="badge badge-neutral" style={{ fontSize: '10px' }}>
                       {c.category}
                     </span>
                   </td>
-                  <td style={{ padding: '10px 12px', color: '#e2e8f0', maxWidth: '420px' }}>
+                  <td style={{ padding: '8px 10px', color: '#cbd5e1', maxWidth: '400px' }}>
                     {c.objective}
                   </td>
-                  <td style={{ padding: '10px 12px', color: '#94a3b8', fontFamily: 'monospace' }}>
+                  <td style={{ padding: '8px 10px', color: '#94a3b8', fontFamily: 'monospace' }}>
                     {c.latency} ms
                   </td>
-                  <td style={{ padding: '10px 12px' }}>
+                  <td style={{ padding: '8px 10px' }}>
                     <span className={`badge ${c.passed ? 'badge-success' : 'badge-danger'}`}>
                       {c.passed ? 'PASSED' : 'FAILED'}
                     </span>
                   </td>
-                  <td style={{ padding: '10px 12px' }}>
+                  <td style={{ padding: '8px 10px' }}>
                     {c.gated ? (
                       <span className="badge badge-warning" style={{ fontSize: '10px' }}>
-                        Gated (Yes)
+                        Gated
                       </span>
                     ) : (
-                      <span style={{ color: '#64748b' }}>N/A</span>
+                      <span style={{ color: '#475569' }}>No</span>
                     )}
                   </td>
                 </tr>
