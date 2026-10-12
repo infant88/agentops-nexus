@@ -77,14 +77,18 @@ class MCPServer:
             raise ValueError(f"Tool '{name}' not found in MCP server registry.")
 
         tool_meta = self.tool_registry[name]
-
-        # 1. Enforce permission checks and sensitive classification
-        is_sensitive, reason = self.policy.is_sensitive_operation(name, arguments)
-
-        # 2. Redacted arguments for logging
-        safe_args = redact_secrets(arguments)
+        is_sensitive = False
 
         try:
+            # 1. Enforce permission checks and sensitive classification
+            is_sensitive, reason = self.policy.is_sensitive_operation(name, arguments)
+
+            # 2. Validate input payload size limits
+            self.policy.validate_input_size(name, arguments)
+
+            # 3. Redacted arguments for logging
+            safe_args = redact_secrets(arguments)
+
             handler = tool_meta["handler"]
             output = handler(arguments)
             safe_output = redact_secrets(output)

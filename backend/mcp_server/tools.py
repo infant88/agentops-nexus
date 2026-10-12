@@ -3,6 +3,7 @@ import difflib
 import sqlite3
 import subprocess
 import sys
+import urllib.parse
 import uuid
 from typing import Any, Dict, List, Optional
 from pydantic import BaseModel, Field
@@ -48,6 +49,11 @@ class MCPTools:
 
     def search_repository(self, input_data: SearchRepositoryInput) -> Dict[str, Any]:
         """Search files and source code in the authorized repository."""
+        # Enforce boundary check on path pattern against directory traversal
+        decoded_pattern = urllib.parse.unquote(input_data.path_pattern)
+        if "\0" in decoded_pattern or ".." in decoded_pattern or decoded_pattern.startswith("/") or decoded_pattern.startswith("\\"):
+            raise SecurityError(f"Access denied: Invalid or escaping path pattern '{input_data.path_pattern}'.")
+
         results = []
         repo_root = self.policy.repo_root
 
