@@ -13,6 +13,7 @@ dependencies = [
     "uvicorn>=0.30.0",
     "pydantic>=2.7.0",
     "langgraph>=1.0.0",
+    "langgraph-checkpoint-sqlite>=2.0.0",
     "langchain-core>=0.2.0",
     "mcp>=1.0.0",
     "sqlalchemy>=2.0.0",
