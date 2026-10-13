@@ -72,6 +72,7 @@ if __name__ == "__main__":
     cur.execute("DROP TABLE IF EXISTS project_tasks")
     cur.execute("DROP TABLE IF EXISTS test_runs")
     cur.execute("DROP TABLE IF EXISTS system_config")
+    cur.execute("DROP TABLE IF EXISTS task_records")
 
     cur.execute("""
     CREATE TABLE project_tasks (
@@ -103,6 +104,22 @@ if __name__ == "__main__":
     )
     """)
 
+    cur.execute("""
+    CREATE TABLE task_records (
+        id TEXT PRIMARY KEY,
+        objective TEXT,
+        status TEXT,
+        current_step INTEGER,
+        retry_count INTEGER,
+        requires_approval INTEGER,
+        approval_status TEXT,
+        result_summary TEXT,
+        error_message TEXT,
+        created_at TEXT,
+        updated_at TEXT
+    )
+    """)
+
     cur.executemany("""
     INSERT INTO project_tasks (ticket_id, title, assigned_to, status, priority)
     VALUES (?, ?, ?, ?, ?)
@@ -131,6 +148,13 @@ if __name__ == "__main__":
 
     conn.commit()
     conn.close()
+
+    try:
+        from backend.database.connection import init_db
+        init_db()
+    except Exception:
+        pass
+
     print("Sandbox repo and project database initialized successfully.")
 
 if __name__ == "__main__":
