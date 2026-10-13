@@ -21,10 +21,32 @@ jobs:
           python-version: "3.12"
           cache: pip
 
-      - name: Install project
+      - name: Install project and dependencies
         run: |
-          python -m pip install --upgrade pip
+          python -m pip install --upgrade pip setuptools wheel
+          # Install the package in editable mode (and its declared dependencies)
           pip install -e .
+
+          # Debug: verify whether langgraph is importable and where it comes from
+          python - <<'PY2'
+import importlib, sys, subprocess, traceback
+try:
+    m = importlib.import_module("langgraph")
+    print("langgraph imported from:", getattr(m, "__file__", "<package>" ))
+    print("langgraph members:", [x for x in dir(m) if not x.startswith("_")][:50])
+except Exception as e:
+    print("langgraph import failed:", e)
+    traceback.print_exc()
+    # Attempt to install langgraph explicitly from PyPI as a fallback
+    print("Attempting pip install langgraph>=1.0.0")
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "langgraph>=1.0.0"])
+    try:
+        m = importlib.import_module("langgraph")
+        print("langgraph imported after install from:", getattr(m, "__file__", "<package>" ))
+    except Exception:
+        print("Still cannot import langgraph after installing; aborting.")
+        raise
+PY2
 
       - name: Check Python imports
         run: python -c "import backend; print('Backend import OK')"
